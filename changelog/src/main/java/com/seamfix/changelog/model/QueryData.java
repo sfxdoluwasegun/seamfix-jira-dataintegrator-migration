@@ -5,7 +5,9 @@ import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.ws.rs.core.Response.Status;
@@ -27,29 +29,37 @@ public class QueryData {
 	private String reporter;
 	private String currentStatus;
 		
-	private String error;
-	private String message;
-	
 	private List<String> toString;
 	private List<String> fromString;
 
 	private StringWriter sWriter = new StringWriter(); 
 
-
 	public String rsJSON() {
-		JsonObject json = (JsonObject) Json.createObjectBuilder()
+		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
+		
+		JsonObjectBuilder json = Json.createObjectBuilder()
 				.add("Task ID", getTaskID())
 				.add("Start Date", getDateCreated())
 				.add("End Date", getDateModified())
 				.add("Reporter", getReporter())
 				.add("Current Status", getCurrentStatus())
-				.add("Story Point", getStoryPoint())
-				.add("toString", (JsonValue) getToString())
-				.add("fromString",  (JsonValue) getFromString())
-				.build();
+				.add("Story Point", getStoryPoint());
+		
+				JsonArrayBuilder toStringBuilder = Json.createArrayBuilder();
+				for(String toString :  getToString()) {
+					toStringBuilder.add(toString);
+				}
 
+				JsonArrayBuilder fromStringBuilder = Json.createArrayBuilder();
+				for(String fromString : getFromString()) {
+					fromStringBuilder.add(fromString);
+				}
+
+				json.add("fromString",fromStringBuilder);
+				json.add("toString", toStringBuilder);
+				arrayBuilder.add(json);
 		try (JsonWriter writer = Json.createWriter(sWriter)) {
-			writer.write(json);
+			writer.write(arrayBuilder.build());
 		}
 		return sWriter.toString();
 	}

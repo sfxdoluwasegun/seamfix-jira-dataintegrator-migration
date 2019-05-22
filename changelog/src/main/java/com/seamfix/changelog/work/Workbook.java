@@ -78,29 +78,30 @@ public class Workbook {
 			JsonObject value = filteredValues.get(j);
 
 			String fromString = value.getJsonArray("items").getJsonObject(0).getString("fromString");
-			listOfFromString.add(fromString);
-			dataBean.setFromString(listOfFromString);
+			listOfFromString.add(j, fromString);
 
 			String toString = value.getJsonArray("items").getJsonObject(0).getString("toString");
-			listOfToString.add(toString);
-			dataBean.setToString(listOfFromString);
+			listOfToString.add(j, toString);
 
 			String currentStatus = listOfToString.get(listOfToString.size() - 1);
-			dataBean.setCurrentStatus(currentStatus);
 
 			String createdTime = filteredValues.get(0).getString("created");
-			dataBean.setDateCreated(createdTime);
 
 			String modifiedTime = filteredValues.get(filteredValues.size() - 1).getString("created");
-			dataBean.setDateModified(modifiedTime);
 
 			String reporter = value.getJsonObject("author").getString("displayName");
+			
 			dataBean.setReporter(reporter);
+			dataBean.setFromString(listOfFromString);
+			dataBean.setToString(listOfToString);
+			dataBean.setDateCreated(createdTime);
+			dataBean.setCurrentStatus(currentStatus);
+			dataBean.setDateModified(modifiedTime);
 
 		}
 		for (int k = 0; k < stories.size(); k++) {
 			JsonObject storyAll = stories.get(k);
-			String storyPoint = storyAll.getJsonArray("items").getJsonObject(0).getString("fromString");
+			String storyPoint = storyAll.getJsonArray("items").getJsonObject(0).getString("toString");
 			dataBean.setStoryPoint(storyPoint);
 		}
 	}
