@@ -19,6 +19,11 @@
 			<plugin>
 				<groupId>io.thorntail</groupId>
 				<artifactId>thorntail-maven-plugin</artifactId>
+				<configuration>
+					<properties>
+						<java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
+					</properties>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -96,5 +101,18 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>nexus</id>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<url>http://nexus.seamfix.com/nexus/content/repositories</url>
+		</repository>
+	</repositories>
 
 </project>

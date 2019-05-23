@@ -83,7 +83,7 @@ public class Workbook {
 
 			String toString = value.getJsonArray("items").getJsonObject(0).getString("toString");
 			listOfToString.add(toString);
-			dataBean.setToString(listOfFromString);
+			dataBean.setToString(listOfToString);
 
 			String currentStatus = listOfToString.get(listOfToString.size() - 1);
 			dataBean.setCurrentStatus(currentStatus);
@@ -100,7 +100,7 @@ public class Workbook {
 		}
 		for (int k = 0; k < stories.size(); k++) {
 			JsonObject storyAll = stories.get(k);
-			String storyPoint = storyAll.getJsonArray("items").getJsonObject(0).getString("fromString");
+			String storyPoint = storyAll.getJsonArray("items").getJsonObject(0).getString("toString");
 			dataBean.setStoryPoint(storyPoint);
 		}
 	}
