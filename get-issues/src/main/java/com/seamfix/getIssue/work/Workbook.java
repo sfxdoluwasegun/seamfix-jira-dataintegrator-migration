@@ -33,7 +33,6 @@ public class Workbook {
 		return "Basic " + encodedAuth;
 	}
 
-
 	public  String getIssue(String key) {
 		String target = "https://seamfix.atlassian.net/rest/api/3/issue/" + key;
 		Client client = null;
@@ -68,7 +67,6 @@ public class Workbook {
 					.getJsonArray("content").getJsonObject(0).getJsonArray("content").getJsonObject(0).getString("text");
 			dataBean.setWorklog(worklog);
 		}
-
 	}
 }
 
