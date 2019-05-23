@@ -7,16 +7,24 @@
     <artifactId>jira-dataintegrator</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
+  
+  <packaging>war</packaging>
   <artifactId>sprint</artifactId>
   <name>Sprint Microservice</name>
   <description>Microservice to spool sprint result from JIRA</description>
   
-  <build>
+  
+	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>io.thorntail</groupId>
 				<artifactId>thorntail-maven-plugin</artifactId>
+				<configuration>
+					<properties>
+						<java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
+					</properties>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -94,8 +102,8 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-  
-  <repositories>
+	
+	<repositories>
 		<repository>
 			<id>nexus</id>
 			<snapshots>
@@ -107,6 +115,5 @@
 			<url>http://nexus.seamfix.com/nexus/content/repositories</url>
 		</repository>
 	</repositories>
-  
   
 </project>
