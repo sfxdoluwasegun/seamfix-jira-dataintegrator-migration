@@ -22,15 +22,6 @@ public class Workbook {
 	@Inject
 	QueryData dataBean;
 
-	private String getAuthHeader() {
-		final String email = "doluwasegun@seamfix.com";
-		final String token= "oruMlBi4CwhOE2X5XgaC2DFA";
-		String auth = email +":"+ token;
-		String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(Charset.forName("ISO-8859-1")));
-		return "Basic " + encodedAuth;
-	}
-
-
 	public  String getSprint() {
 		String target = "http://seamfix.atlassian.net/rest/greenhopper/1.0/rapid/charts/sprintreport?rapidViewId=" + dataBean.getProjectID() + "&sprintId="+ dataBean.getSprintID();
 		Client client = null;
@@ -38,13 +29,12 @@ public class Workbook {
 			client = ClientBuilder.newClient();
 			return client.target(target.trim())
 					.request(MediaType.APPLICATION_JSON)
-					.header(HttpHeaders.AUTHORIZATION, getAuthHeader())
+					.header(HttpHeaders.AUTHORIZATION, "Basic " + Base64.getEncoder().encodeToString(dataBean.getAuth().getBytes(Charset.forName("ISO-8859-1"))))
 					.get(String.class);
 			
 		} finally {
 			if (client != null)
 				client.close();
-
 		}
 	}
 	

@@ -21,6 +21,7 @@ public class QueryData {
 	private String completeStoryPoint;
 	private String startDate;
 	private String endDate;
+	private String auth ;
 	
 	private StringWriter sWriter = new StringWriter(); 
 	
@@ -40,9 +41,9 @@ public class QueryData {
 		return sWriter.toString();
 	}
 	
-	public void init(int projectID, int sprintID ) {
+	public void init(int projectID, int sprintID, String token) {
 		this.projectID = projectID;
 		this.sprintID = sprintID;
-		
+		this.auth = token;
 	}
 }

@@ -2,6 +2,7 @@ package com.seamfix.sprint.rs;
 
 import javax.inject.Inject;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
@@ -22,8 +23,8 @@ public class Main {
 	
 	@GET
 	@Path("{projectID}/{sprintID}")
-	public Response call(@PathParam("projectID") int projectID, @PathParam("sprintID") int sprintID) {
-	    dataBean.init(projectID, sprintID );
+	public Response call(@PathParam("projectID") int projectID, @PathParam("sprintID") int sprintID, @HeaderParam(value = "Authorization") String token) {
+	    dataBean.init(projectID, sprintID, token);
 		workbook.getJSON();
 
 		return Response.ok().entity(dataBean.rsJSON()).type("application/json").build();
