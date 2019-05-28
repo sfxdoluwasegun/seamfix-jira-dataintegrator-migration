@@ -30,8 +30,8 @@ public class Workbook {
 	@Inject
 	QueryData dataBean;
 
-	public  String getSprint() {
-		String target = "http://seamfix.atlassian.net/rest/greenhopper/1.0/rapid/charts/sprintreport?rapidViewId=" + dataBean.getProjectID() + "&sprintId="+ dataBean.getSprintID();
+	public  String getSprint1() {
+		String target = "http://seamfix.atlassian.net//rest/greenhopper/1.0/sprintquery/"+ dataBean.getSprintID()+"?includeHistoricSprints=true&includeFutureSprints=true (200)";
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
@@ -46,6 +46,9 @@ public class Workbook {
 			
 			if (status == 403)
 				throw new ForbiddenException();
+			
+			log.log(Level.INFO, "Respoonse status: {0}", status);
+			
 			if (status != 200)
 				throw new BadRequestException();
 			
@@ -58,10 +61,11 @@ public class Workbook {
 				client.close();
 		}
 	}
+
 	
 	public void getJSON() {
 		
-		JsonObject root = Json.createReader(new StringReader(getSprint())).readObject();
+		JsonObject root = Json.createReader(new StringReader(getSprint1())).readObject();
 		
         JsonObject contents = root.getJsonObject("contents");
          String totalStoryPoint = contents.asJsonObject().getJsonObject("allIssuesEstimateSum").getString("text");
@@ -79,5 +83,11 @@ public class Workbook {
          String endDate = contents.asJsonObject().getJsonObject("sprint").getString("isoEndDate");
          System.out.println(endDate);
          dataBean.setEndDate(endDate);
+	}
+
+
+	private String getSprint() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

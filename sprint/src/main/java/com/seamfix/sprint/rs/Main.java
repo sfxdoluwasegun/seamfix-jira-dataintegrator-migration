@@ -36,9 +36,9 @@ public class Main {
 	}
 	
 	@GET
-	@Path("{projectID}/{sprintID}")
-	public Response call(@PathParam("projectID") int projectID, @PathParam("sprintID") int sprintID, @HeaderParam(value = "Authorization") String token) {
-	    dataBean.init(projectID, sprintID, token);
+	@Path("{sprintID}")
+	public Response call( @PathParam("sprintID") int sprintID, @HeaderParam(value = "Authorization") String token) {
+	    dataBean.init( sprintID, token);
 		workbook.getJSON();
 
 		return Response.ok().entity(dataBean.rsJSON()).type("application/json").build();

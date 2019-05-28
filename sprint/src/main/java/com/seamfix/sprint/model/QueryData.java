@@ -27,7 +27,6 @@ public class QueryData {
 	
 	public String rsJSON() {
 		JsonObject json = (JsonObject) Json.createObjectBuilder()
-				.add("ProjectID", getProjectID())
 				.add("SprintID", getSprintID())
 				.add("Total Story Point", getTotalStoryPoint())
 				.add("Complete Story Point", getCompleteStoryPoint())
@@ -41,8 +40,7 @@ public class QueryData {
 		return sWriter.toString();
 	}
 	
-	public void init(int projectID, int sprintID, String token) {
-		this.projectID = projectID;
+	public void init(int sprintID, String token) {
 		this.sprintID = sprintID;
 		this.auth = token;
 	}

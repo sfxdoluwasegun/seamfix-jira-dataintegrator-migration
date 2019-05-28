@@ -177,5 +177,6 @@
 		<module>get-issues</module>
 		<module>changelog</module>
 		<module>sprint</module>
+		<module>projects</module>
 	</modules>
 </project>
