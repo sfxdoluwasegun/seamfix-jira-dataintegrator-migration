@@ -23,8 +23,8 @@ public class Workbook {
 	QueryData dataBean;
 
 	private String getAuthHeader() {
-		String email = "mabikoye@seamfix.com";
-		String token= "wXtzMKuBuOmzoRJJrNDtCF23";
+		final String email = "doluwasegun@seamfix.com";
+		final String token= "oruMlBi4CwhOE2X5XgaC2DFA";
 		String auth = email +":"+ token;
 		String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(Charset.forName("ISO-8859-1")));
 		return "Basic " + encodedAuth;
