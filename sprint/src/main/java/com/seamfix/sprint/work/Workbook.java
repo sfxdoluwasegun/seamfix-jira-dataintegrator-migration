@@ -31,14 +31,14 @@ public class Workbook {
 	}
 
 
-	public  String getSprint(int projectID, int sprintID ) {
-		String target = "http://seamfix.atlassian.net/rest/greenhopper/1.0/rapid/charts/sprintreport?rapidViewId=" + projectID + "&sprintId="+ sprintID;
+	public  String getSprint() {
+		String target = "http://seamfix.atlassian.net/rest/greenhopper/1.0/rapid/charts/sprintreport?rapidViewId=" + dataBean.getProjectID() + "&sprintId="+ dataBean.getSprintID();
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
 			return client.target(target.trim())
 					.request(MediaType.APPLICATION_JSON)
-					.header("Authorization: ", getAuthHeader())
+					.header(HttpHeaders.AUTHORIZATION, getAuthHeader())
 					.get(String.class);
 			
 		} finally {
@@ -49,9 +49,8 @@ public class Workbook {
 	}
 	
 	public void getJSON() {
-		int projectID = dataBean.getProjectID();
-		int sprintID =dataBean.getSprintID();
-		JsonObject root = Json.createReader(new StringReader(getSprint(projectID, sprintID))).readObject();
+		
+		JsonObject root = Json.createReader(new StringReader(getSprint())).readObject();
 		
         JsonObject contents = root.getJsonObject("contents");
          String totalStoryPoint = contents.asJsonObject().getJsonObject("allIssuesEstimateSum").getString("text");
@@ -69,7 +68,5 @@ public class Workbook {
          String endDate = contents.asJsonObject().getJsonObject("sprint").getString("isoEndDate");
          System.out.println(endDate);
          dataBean.setEndDate(endDate);
-         
-         
 	}
 }
