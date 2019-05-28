@@ -3,14 +3,20 @@ package com.seamfix.sprint.work;
 import java.io.StringReader;
 import java.nio.charset.Charset;
 import java.util.Base64;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonObject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ForbiddenException;
+import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.apache.http.HttpHeaders;
 
@@ -18,6 +24,8 @@ import com.seamfix.sprint.model.QueryData;
 
 @Dependent
 public class Workbook {
+	
+	private final Logger log = Logger.getLogger(Workbook.class.getName());
 
 	@Inject
 	QueryData dataBean;
@@ -27,11 +35,24 @@ public class Workbook {
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
-			return client.target(target.trim())
+			Response response = client.target(target.trim())
 					.request(MediaType.APPLICATION_JSON)
 					.header(HttpHeaders.AUTHORIZATION, "Basic " + Base64.getEncoder().encodeToString(dataBean.getAuth().getBytes(Charset.forName("ISO-8859-1"))))
-					.get(String.class);
+					.get(Response.class);
+			if (response == null)
+				throw new InternalServerErrorException();
+
+			int status = response.getStatus();
 			
+			if (status == 403)
+				throw new ForbiddenException();
+			if (status != 200)
+				throw new BadRequestException();
+			
+			String jsonString = response.readEntity(String.class);
+			log.log(Level.INFO, "Response status code: {0} Response body: {1}", new Object[]{status, jsonString});
+			
+			return jsonString;
 		} finally {
 			if (client != null)
 				client.close();
