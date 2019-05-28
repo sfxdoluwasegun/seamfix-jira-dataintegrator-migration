@@ -14,8 +14,9 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+
+import org.apache.http.HttpHeaders;
 
 import com.seamfix.changelog.model.QueryData;
 
@@ -36,6 +37,8 @@ public class Workbook {
 
 	public  String changeLogs(String key) {
 		String target ="https://seamfix.atlassian.net/rest/api/3/issue/" + key +"/changelog?";
+		System.out.println(getAuthHeader());
+		System.out.println(target);
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();

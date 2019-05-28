@@ -34,12 +34,12 @@ public class QueryData {
 		JsonArrayBuilder arrayBuilder = Json.createArrayBuilder();
 		
 		JsonObjectBuilder json = Json.createObjectBuilder()
-				.add("Task ID", getTaskID())
-				.add("Start Date", getDateCreated())
-				.add("End Date", getDateModified())
-				.add("Reporter", getReporter())
-				.add("Current Status", getCurrentStatus())
-				.add("Story Point", getStoryPoint());
+				.add("taskID", getTaskID())
+				.add("startDate", getDateCreated())
+				.add("endDate", getDateModified())
+				.add("reporter", getReporter())
+				.add("currentStatus", getCurrentStatus())
+				.add("storyPoint", getStoryPoint());
 		
 				JsonArrayBuilder toStringBuilder = Json.createArrayBuilder();
 				for(String toString :  getToString()) {
