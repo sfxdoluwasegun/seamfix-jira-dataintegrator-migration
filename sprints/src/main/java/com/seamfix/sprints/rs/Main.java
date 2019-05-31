@@ -14,8 +14,8 @@ public class Main {
 	
 	
 	@GET
-	public String call() {
-		return workbook.sprints();
+	public void call() {
+		workbook.getJSON();
 	}
 		
 }

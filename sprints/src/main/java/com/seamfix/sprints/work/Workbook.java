@@ -1,16 +1,23 @@
 package com.seamfix.sprints.work;
 
+import java.io.StringReader;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
+import javax.json.Json;
+import javax.json.JsonArray;
+import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpHeaders;
 
+import com.arjuna.ats.internal.arjuna.objectstore.jdbc.drivers.ibm_driver;
 import com.seamfix.sprints.model.QueryData;
 
 
@@ -42,6 +49,20 @@ public class Workbook {
 			if (client != null)
 				client.close();
 		}
+	}
+	
+	public void getJSON() {
+		JsonObject root = Json.createReader(new StringReader(sprints())).readObject();
+		
+		JsonArray values = root.getJsonArray("values");
+		
+		List<String> listOfName = new ArrayList<>();
+		
+		for(int i = 0; i < values.size(); i++ ) {
+			String name = values.asJsonObject().getString("name");
+			listOfName.add(name);
+			System.out.println(listOfName);
+			}
 	}
 
 }
