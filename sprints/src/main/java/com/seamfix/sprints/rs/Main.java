@@ -3,7 +3,9 @@ package com.seamfix.sprints.rs;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.core.Response;
 
+import com.seamfix.sprints.model.QueryData;
 import com.seamfix.sprints.work.Workbook;
 
 @Path("/")
@@ -12,10 +14,14 @@ public class Main {
 	@Inject
 	Workbook workbook;
 	
+	@Inject
+	QueryData dataBean;
 	
 	@GET
-	public void call() {
+	public Response call() {
 		workbook.getJSON();
+		
+		return Response.ok().entity(dataBean.JSON()).type("application/json").build();
 	}
 		
 }

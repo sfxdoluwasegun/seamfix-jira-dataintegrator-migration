@@ -19,6 +19,7 @@ import org.apache.http.HttpHeaders;
 
 import com.arjuna.ats.internal.arjuna.objectstore.jdbc.drivers.ibm_driver;
 import com.seamfix.sprints.model.QueryData;
+import com.seamfix.sprints.model.Sprint;
 
 
 @Dependent
@@ -50,19 +51,28 @@ public class Workbook {
 				client.close();
 		}
 	}
-	
+
 	public void getJSON() {
 		JsonObject root = Json.createReader(new StringReader(sprints())).readObject();
-		
+
 		JsonArray values = root.getJsonArray("values");
-		
-		List<String> listOfName = new ArrayList<>();
-		
+
+
 		for(int i = 0; i < values.size(); i++ ) {
-			String name = values.asJsonObject().getString("name");
-			listOfName.add(name);
-			System.out.println(listOfName);
-			}
+			Sprint sprint = new Sprint();
+			String name = values.asJsonArray().getJsonObject(i).getString("name");
+			sprint.setName(name);
+
+			int id = values.asJsonArray().getJsonObject(i).getInt("id");
+			sprint.setId(id);			
+			String startDate = values.asJsonArray().getJsonObject(i).getString("startDate");
+			sprint.setStartDate(startDate);
+
+			String endDate = values.asJsonArray().getJsonObject(i).getString("endDate");
+			sprint.setEndDate(endDate);
+			
+			dataBean.getSprints().add(sprint);
+		}
 	}
 
 }
