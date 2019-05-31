@@ -19,6 +19,8 @@ import lombok.Setter;
 public class QueryData {
 
 	private ArrayList<Sprint> sprints = new ArrayList<>();
+	
+	private int projectID;
 
 	private StringWriter sWriter = new StringWriter(); 
 
@@ -49,5 +51,10 @@ public class QueryData {
 
 	public void addProject(Sprint sprint) {
 		this.sprints.add(sprint);
+	}
+
+	public void init(int projectID) {
+		this.projectID = projectID;
+		
 	}
 }

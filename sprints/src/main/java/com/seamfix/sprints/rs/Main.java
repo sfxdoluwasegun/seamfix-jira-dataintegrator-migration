@@ -3,6 +3,7 @@ package com.seamfix.sprints.rs;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import com.seamfix.sprints.model.QueryData;
@@ -18,7 +19,9 @@ public class Main {
 	QueryData dataBean;
 	
 	@GET
-	public Response call() {
+	@Path("{productID}")
+	public Response call(@PathParam("productID") int projectID) {
+		 dataBean.init( projectID);
 		workbook.getJSON();
 		
 		return Response.ok().entity(dataBean.JSON()).type("application/json").build();
