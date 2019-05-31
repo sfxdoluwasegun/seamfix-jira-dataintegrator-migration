@@ -5,6 +5,8 @@
     <artifactId>jira-dataintegrator</artifactId>
     <version>1.0.0-SNAPSHOT</version>
   </parent>
+  
+  <packaging>war</packaging>
   <artifactId>sprints</artifactId>
   <name>Sprints Microservice</name>
   

@@ -178,5 +178,6 @@
 		<module>changelog</module>
 		<module>sprint</module>
 		<module>projects</module>
+		<module>sprints</module>
 	</modules>
 </project>

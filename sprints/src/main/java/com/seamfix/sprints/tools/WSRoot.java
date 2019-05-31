@@ -1,5 +1,9 @@
 package com.seamfix.sprints.tools;
 
-public class WSRoot {
+import javax.ws.rs.ApplicationPath;
+import javax.ws.rs.core.Application;
+
+@ApplicationPath(value = "sprints")
+public class WSRoot extends Application {
 
 }
