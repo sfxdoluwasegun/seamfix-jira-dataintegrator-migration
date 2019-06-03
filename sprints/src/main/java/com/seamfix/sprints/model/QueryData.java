@@ -4,8 +4,10 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 
 import javax.enterprise.context.RequestScoped;
+import javax.faces.application.ProjectStage;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriter;
 
@@ -18,21 +20,25 @@ import lombok.Setter;
 @RequestScoped
 public class QueryData {
 
-	private ArrayList<Sprint> sprints = new ArrayList<>();
+	private ArrayList<Project> project = new ArrayList<>();
+	
+	private int  sprints;
+	
+	private String startDate;
+	private String endDate;
 	
 	private int projectID;
+	private int sprintID;
 
 	private StringWriter sWriter = new StringWriter(); 
 
 	public String JSON() {
-
-
 		JsonObjectBuilder json = Json.createObjectBuilder();
 
 		JsonArrayBuilder sprintBuilder = Json.createArrayBuilder();
-		for(Sprint sprint : getSprints() ) {
+		for(Project sprint : getProject()) {
 			JsonObjectBuilder object = Json.createObjectBuilder()
-					.add("id",  String.valueOf(sprint.getId()))
+					.add("projectId",  String.valueOf(sprint.getId()))
 					.add("name", sprint.getName())
 					.add("startDate",  sprint.getStartDate())
 					.add("endDate",  sprint.getEndDate());
@@ -49,12 +55,14 @@ public class QueryData {
 
 	}
 
-	public void addProject(Sprint sprint) {
-		this.sprints.add(sprint);
+	public void addProject(Project project) {
+		this.project.add(project);
 	}
 
 	public void init(int projectID) {
 		this.projectID = projectID;
 		
 	}
+	
+	
 }

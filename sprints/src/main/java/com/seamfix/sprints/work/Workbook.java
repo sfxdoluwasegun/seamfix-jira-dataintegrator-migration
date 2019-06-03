@@ -11,6 +11,7 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.persistence.criteria.Root;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
@@ -19,7 +20,7 @@ import org.apache.http.HttpHeaders;
 
 import com.arjuna.ats.internal.arjuna.objectstore.jdbc.drivers.ibm_driver;
 import com.seamfix.sprints.model.QueryData;
-import com.seamfix.sprints.model.Sprint;
+import com.seamfix.sprints.model.Project;
 
 
 @Dependent
@@ -51,6 +52,22 @@ public class Workbook {
 				client.close();
 		}
 	}
+	
+	public String sprintDetail() {
+		String target ="https://seamfix.atlassian.net/rest/agile/1.0/sprint/" + dataBean.getSprintID();
+		Client client = null;
+		try {
+			client = ClientBuilder.newClient();
+			return client.target(target.trim())
+					.request(MediaType.APPLICATION_JSON)
+					.header(HttpHeaders.AUTHORIZATION, getAuthHeader())
+					.get(String.class);
+		} finally {
+			if (client != null)
+				client.close();
+		}
+	
+	}
 
 	public void getJSON() {
 		JsonObject root = Json.createReader(new StringReader(sprints())).readObject();
@@ -59,20 +76,35 @@ public class Workbook {
 
 
 		for(int i = 0; i < values.size(); i++ ) {
-			Sprint sprint = new Sprint();
+			Project project = new Project();
 			String name = values.asJsonArray().getJsonObject(i).getString("name");
-			sprint.setName(name);
+			project.setName(name);
 
 			int id = values.asJsonArray().getJsonObject(i).getInt("id");
-			sprint.setId(id);			
+			project.setId(id);			
 			String startDate = values.asJsonArray().getJsonObject(i).getString("startDate");
-			sprint.setStartDate(startDate);
+			project.setStartDate(startDate);
 
 			String endDate = values.asJsonArray().getJsonObject(i).getString("endDate");
-			sprint.setEndDate(endDate);
+			project.setEndDate(endDate);
 			
-			dataBean.getSprints().add(sprint);
+			dataBean.getProject().add(project);
 		}
+	}
+	
+	public void sprint() {
+		JsonObject root = Json.createReader(new StringReader(sprintDetail())).readObject();
+		
+		int id = root.getInt("id");
+		System.out.println(id);
+		dataBean.setSprintID(id);
+		
+		String startDate = root.getString("startDate");
+		System.out.println(startDate);
+		dataBean.setStartDate(startDate);
+		
+		String endDate = root.getString("endDate");
+		dataBean.setEndDate(endDate);
 	}
 
 }

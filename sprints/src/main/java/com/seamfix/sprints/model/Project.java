@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Sprint {
+public class Project {
 
 	private int id;
 	private String name;

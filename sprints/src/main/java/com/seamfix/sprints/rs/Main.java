@@ -19,12 +19,20 @@ public class Main {
 	QueryData dataBean;
 	
 	@GET
-	@Path("{productID}")
-	public Response call(@PathParam("productID") int projectID) {
+	@Path("/project/{productID}")
+	public Response callProject(@PathParam("productID") int projectID) {
 		 dataBean.init( projectID);
 		workbook.getJSON();
 		
 		return Response.ok().entity(dataBean.JSON()).type("application/json").build();
+	}
+	
+	@GET
+	@Path("/sprint/{sprintID}")
+	public void callSprint(@PathParam("sprintID") int sprintID) {
+		workbook.sprint();
+		
+		
 	}
 		
 }
