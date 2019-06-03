@@ -96,11 +96,9 @@ public class Workbook {
 		JsonObject root = Json.createReader(new StringReader(sprintDetail())).readObject();
 		
 		int id = root.getInt("id");
-		System.out.println(id);
 		dataBean.setSprintID(id);
 		
 		String startDate = root.getString("startDate");
-		System.out.println(startDate);
 		dataBean.setStartDate(startDate);
 		
 		String endDate = root.getString("endDate");

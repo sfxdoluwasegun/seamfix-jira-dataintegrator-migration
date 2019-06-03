@@ -21,12 +21,12 @@ import lombok.Setter;
 public class QueryData {
 
 	private ArrayList<Project> project = new ArrayList<>();
-	
+
 	private int  sprints;
-	
+
 	private String startDate;
 	private String endDate;
-	
+
 	private int projectID;
 	private int sprintID;
 
@@ -61,8 +61,26 @@ public class QueryData {
 
 	public void init(int projectID) {
 		this.projectID = projectID;
-		
+
 	}
-	
-	
+
+	public void initS(int sprintID) {
+		this.sprintID = sprintID;
+
+	}
+
+
+	public String getSprintDetail() {
+		JsonObject json = Json.createObjectBuilder()
+				.add("sprintId", getSprintID())
+				.add("startDate", getStartDate())
+				.add("endDate", getEndDate())
+				.build();
+
+		try (JsonWriter writer = Json.createWriter(sWriter)) {
+			writer.write(json);
+		}
+		return sWriter.toString();
+
+	}
 }

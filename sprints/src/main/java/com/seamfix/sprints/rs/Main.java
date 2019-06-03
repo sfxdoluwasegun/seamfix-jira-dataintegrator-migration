@@ -29,10 +29,11 @@ public class Main {
 	
 	@GET
 	@Path("/sprint/{sprintID}")
-	public void callSprint(@PathParam("sprintID") int sprintID) {
+	public Response callSprint(@PathParam("sprintID") int sprintID) {
+		dataBean.initS(sprintID);
 		workbook.sprint();
 		
-		
+		return Response.ok().entity(dataBean.getSprintDetail()).type("application/json").build();
 	}
 		
 }
