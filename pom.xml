@@ -179,5 +179,6 @@
 		<module>sprint</module>
 		<module>projects</module>
 		<module>sprints</module>
+		<module>issue-keys</module>
 	</modules>
 </project>

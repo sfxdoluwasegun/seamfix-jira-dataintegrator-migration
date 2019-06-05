@@ -36,12 +36,12 @@ public class QueryData {
 		JsonObjectBuilder json = Json.createObjectBuilder();
 
 		JsonArrayBuilder sprintBuilder = Json.createArrayBuilder();
-		for(Project sprint : getProject()) {
+		for(Project project : getProject()) {
 			JsonObjectBuilder object = Json.createObjectBuilder()
-					.add("projectId",  String.valueOf(sprint.getId()))
-					.add("name", sprint.getName())
-					.add("startDate",  sprint.getStartDate())
-					.add("endDate",  sprint.getEndDate());
+					.add("projectId",  String.valueOf(project.getId()))
+					.add("name", project.getName())
+					.add("startDate",  project.getStartDate())
+					.add("endDate",  project.getEndDate());
 			sprintBuilder.add(object);
 		}
 
