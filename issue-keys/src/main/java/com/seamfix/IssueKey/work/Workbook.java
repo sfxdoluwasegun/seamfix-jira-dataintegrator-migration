@@ -1,6 +1,7 @@
 package com.seamfix.IssueKey.work;
 
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Base64;
@@ -12,8 +13,10 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonWriter;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpHeaders;
@@ -86,9 +89,29 @@ public class Workbook {
 				parent.setKey(skey);
 
 				dataBean.getParent().add(parent);
+				
+				
 			}
 		}
 
+	}
+	
+	public String createJson() {
+		Parent parent = new Parent();
+		JsonObject json = Json.createObjectBuilder()
+				.add("id", parent.getId())
+				.add("key", parent.getKey())
+				.build();
+		StringWriter sWriter = new StringWriter();
+		try (JsonWriter writer = Json.createWriter(sWriter)) {
+			writer.write(json);
+		}
+		return sWriter.toString();
+	}
+	
+	public JsonObject postJSON() {
+		return null;
+	
 	}
 
 }
