@@ -17,8 +17,10 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpHeaders;
+import org.jboss.shrinkwrap.descriptor.api.beans11.IfClassAvailable;
 
 import com.seamfix.changelog.model.QueryData;
+import com.seamfix.changelog.model.TransitionHistory;
 
 @Dependent
 public class Workbook {
@@ -37,8 +39,6 @@ public class Workbook {
 
 	public  String changeLogs(String key) {
 		String target ="https://seamfix.atlassian.net/rest/api/3/issue/" + key +"/changelog?";
-		System.out.println(getAuthHeader());
-		System.out.println(target);
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
@@ -59,9 +59,10 @@ public class Workbook {
 
 
 
-		List<String> listOfFromString = new ArrayList<>();
 		List<String> listOfToString = new ArrayList<>();
-
+		List<String> listOfAuthors = new ArrayList<>();
+		List<String> listOfPoints = new ArrayList<>();
+		
 		JsonArray values = root.getJsonArray("values");
 
 		List<JsonObject> filteredValues = values
@@ -80,32 +81,52 @@ public class Workbook {
 
 			JsonObject value = filteredValues.get(j);
 
+			TransitionHistory histories = new TransitionHistory();
+
 			String fromString = value.getJsonArray("items").getJsonObject(0).getString("fromString");
-			listOfFromString.add(fromString);
-			dataBean.setFromString(listOfFromString);
+			histories.setFromString(fromString);
 
 			String toString = value.getJsonArray("items").getJsonObject(0).getString("toString");
 			listOfToString.add(toString);
-			dataBean.setToString(listOfToString);
+			histories.setToString(toString);
+
+			dataBean.getHistories().add(histories);
 
 			String currentStatus = listOfToString.get(listOfToString.size() - 1);
 			dataBean.setCurrentStatus(currentStatus);
 
-			String createdTime = filteredValues.get(0).getString("created");
-			dataBean.setDateCreated(createdTime);
+			JsonObject createdTimeError = filteredValues.get(0);	
+			System.out.println(createdTimeError.containsKey("created") );
+			if (createdTimeError.containsKey("created")) {
+				String createdTime = filteredValues.get(0).getString("created");
+				dataBean.setDateCreated(createdTime);
 
-			String modifiedTime = filteredValues.get(filteredValues.size() - 1).getString("created");
-			dataBean.setDateModified(modifiedTime);
+				String modifiedTime = filteredValues.get(filteredValues.size() - 1).getString("created");
+				dataBean.setDateModified(modifiedTime);
+			} else {
+				dataBean.setDateCreated("No createdtime");
+				dataBean.setDateModified("No modified date");
+			}
+
 
 			String reporter = value.getJsonObject("author").getString("displayName");
+			listOfAuthors.add(reporter);
 			dataBean.setReporter(reporter);
 
+			int k = 0;
+			if (k == stories.size()) {
+				dataBean.setStoryPoint("No Story Point");
+			}else {
+				JsonObject storyAll = stories.get(k);
+				String storyPoint = storyAll.getJsonArray("items").getJsonObject(0).getString("toString");
+				listOfPoints.add(storyPoint);
+				dataBean.setStoryPoint(storyPoint);
+			}
 		}
-		for (int k = 0; k < stories.size(); k++) {
-			JsonObject storyAll = stories.get(k);
-			String storyPoint = storyAll.getJsonArray("items").getJsonObject(0).getString("toString");
-			dataBean.setStoryPoint(storyPoint);
-		}
+//		long totalMemeber = listOfAuthors.stream().distinct().count();
+//		System.out.println(totalMemeber);
+		
+		 //int sum = listOfPoints.stream().mapToInt(Integer::intValue).sum();
 	}
 }
 

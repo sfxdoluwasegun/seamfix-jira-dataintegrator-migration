@@ -23,6 +23,7 @@ public class QueryData {
 
 	private int productID;
 	private int sprintID;
+	
 
 	private StringWriter sWriter = new StringWriter();
 
@@ -33,7 +34,12 @@ public class QueryData {
 		for(Parent parent : getParent()) {
 			JsonObjectBuilder object = Json.createObjectBuilder()
 					.add("id",  parent.getId())
-					.add("key", parent.getKey());
+					.add("key", parent.getKey())
+					.add("startDate", parent.getDateCreated())
+					.add("endDate", parent.getDateModified())
+					.add("reporter", parent.getReporter())
+					.add("currentStatus", parent.getCurrentStatus())
+					.add("storyPoint", parent.getStoryPoint());
 			parentBuilder.add(object);
 		}
 
