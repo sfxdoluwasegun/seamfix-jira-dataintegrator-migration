@@ -1,0 +1,119 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+ xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.seamfix</groupId>
+    <artifactId>jira-dataintegrator</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+  </parent>
+  
+  <packaging>war</packaging>
+  <artifactId>sprint</artifactId>
+  <name>Sprint Microservice</name>
+  <description>Microservice to spool sprint result from JIRA</description>
+  
+  
+	<build>
+		<finalName>${project.artifactId}</finalName>
+		<plugins>
+			<plugin>
+				<groupId>io.thorntail</groupId>
+				<artifactId>thorntail-maven-plugin</artifactId>
+				<configuration>
+					<properties>
+						<java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
+					</properties>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>package</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
+	<dependencies>
+		<!-- Java EE 7 dependency -->
+		<dependency>
+			<groupId>javax</groupId>
+			<artifactId>javaee-api</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<!-- WildFly Swarm Fractions -->
+		<dependency>
+			<groupId>io.thorntail</groupId>
+			<artifactId>cdi</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.thorntail</groupId>
+			<artifactId>jaxrs</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.thorntail</groupId>
+			<artifactId>jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>io.thorntail</groupId>
+			<artifactId>microprofile</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.eclipse.microprofile</groupId>
+			<artifactId>microprofile</artifactId>
+			<type>pom</type>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.nimbusds</groupId>
+			<artifactId>nimbus-jose-jwt</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcpkix-jdk15on</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.thorntail</groupId>
+			<artifactId>arquillian</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.junit</groupId>
+			<artifactId>arquillian-junit-container</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.graphene</groupId>
+			<artifactId>graphene-webdriver</artifactId>
+			<type>pom</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.jboss.arquillian.extension</groupId>
+			<artifactId>arquillian-rest-client-impl-jersey</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	
+	<repositories>
+		<repository>
+			<id>nexus</id>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<url>http://nexus.seamfix.com/nexus/content/repositories</url>
+		</repository>
+	</repositories>
+  
+</project>
