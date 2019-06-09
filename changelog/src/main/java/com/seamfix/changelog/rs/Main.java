@@ -1,7 +1,7 @@
 package com.seamfix.changelog.rs;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
@@ -18,7 +18,7 @@ public class Main {
 	@Inject 
 	Workbook workbook;
 	
-	@GET
+	@POST
 	@Path(value="{taskID}")
 	public Response call(@PathParam("taskID") String taskID) {
 	    dataBean.init(taskID);

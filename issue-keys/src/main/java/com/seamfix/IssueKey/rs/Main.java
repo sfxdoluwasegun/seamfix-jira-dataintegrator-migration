@@ -1,7 +1,7 @@
 package com.seamfix.IssueKey.rs;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.core.Response;
 
@@ -17,7 +17,7 @@ public class Main {
 	@Inject
 	QueryData dataBean;
 	
-	@GET
+	@POST
 	@Path("/keys")
 	public Response call() {
 		workbook.getKeys();
