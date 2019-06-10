@@ -11,6 +11,6 @@ public class Parent {
 	private String storyPoint;
 	private String dateCreated;
 	private String dateModified;
-	private String reporter;
+	private String assignee;
 	private String currentStatus;
 }

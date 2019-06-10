@@ -23,23 +23,27 @@ public class QueryData {
 
 	private int productID;
 	private int sprintID;
+	private long members;
+	private double totalPoints;
 	
 
 	private StringWriter sWriter = new StringWriter();
 
 	public String getJSON() {
-		JsonObjectBuilder json = Json.createObjectBuilder();
-
+		JsonObjectBuilder json = Json.createObjectBuilder()
+				.add("totalMember", getMembers())
+				.add("totalPoints", getTotalPoints());
 		JsonArrayBuilder parentBuilder = Json.createArrayBuilder();
 		for(Parent parent : getParent()) {
 			JsonObjectBuilder object = Json.createObjectBuilder()
 					.add("id",  parent.getId())
 					.add("key", parent.getKey())
 					.add("startDate", parent.getDateCreated())
+					.add("assignee", parent.getAssignee())
 					.add("endDate", parent.getDateModified())
-					.add("reporter", parent.getReporter())
 					.add("currentStatus", parent.getCurrentStatus())
 					.add("storyPoint", parent.getStoryPoint());
+					
 			parentBuilder.add(object);
 		}
 
@@ -47,7 +51,8 @@ public class QueryData {
 		for(Issues issues : getIssues()) {
 			JsonObjectBuilder object = Json.createObjectBuilder()
 					.add("id",  issues.getId())
-					.add("key", issues.getKey());
+					.add("key", issues.getKey())
+					.add("assignee", issues.getAssignee());
 			issuesBuilder.add(object);
 		}
 

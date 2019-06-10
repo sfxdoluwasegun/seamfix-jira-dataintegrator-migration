@@ -35,7 +35,6 @@ public class QueryData {
 				.add("taskID", getTaskID())
 				.add("startDate", getDateCreated())
 				.add("endDate", getDateModified())
-				.add("reporter", getReporter())
 				.add("currentStatus", getCurrentStatus())
 				.add("storyPoint", getStoryPoint());
 		

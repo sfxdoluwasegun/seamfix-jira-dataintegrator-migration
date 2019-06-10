@@ -9,5 +9,6 @@ public class Issues {
 	
 	private String id;
 	private String key;
+	private String assignee;
 
 }

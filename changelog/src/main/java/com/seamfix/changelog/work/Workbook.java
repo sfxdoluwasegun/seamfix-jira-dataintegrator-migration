@@ -17,7 +17,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpHeaders;
-import org.jboss.shrinkwrap.descriptor.api.beans11.IfClassAvailable;
 
 import com.seamfix.changelog.model.QueryData;
 import com.seamfix.changelog.model.TransitionHistory;
@@ -27,6 +26,7 @@ public class Workbook {
 
 	@Inject
 	QueryData dataBean;
+
 
 	private static String getAuthHeader() {
 		final String email = "mabikoye@seamfix.com";
@@ -60,9 +60,9 @@ public class Workbook {
 
 
 		List<String> listOfToString = new ArrayList<>();
-		List<String> listOfAuthors = new ArrayList<>();
-		List<String> listOfPoints = new ArrayList<>();
+
 		
+
 		JsonArray values = root.getJsonArray("values");
 
 		List<JsonObject> filteredValues = values
@@ -76,57 +76,50 @@ public class Workbook {
 				.filter(story -> story.asJsonObject().getJsonArray("items").getJsonObject(0).getString("field").equals("Story Points"))
 				.map(story -> story.asJsonObject())
 				.collect(Collectors.toList());
+		int j=0;
 
-		for (int j = 0; j < filteredValues.size(); j++) {
-
-			JsonObject value = filteredValues.get(j);
-
-			TransitionHistory histories = new TransitionHistory();
-
-			String fromString = value.getJsonArray("items").getJsonObject(0).getString("fromString");
-			histories.setFromString(fromString);
-
-			String toString = value.getJsonArray("items").getJsonObject(0).getString("toString");
-			listOfToString.add(toString);
-			histories.setToString(toString);
-
-			dataBean.getHistories().add(histories);
-
-			String currentStatus = listOfToString.get(listOfToString.size() - 1);
-			dataBean.setCurrentStatus(currentStatus);
-
-			JsonObject createdTimeError = filteredValues.get(0);	
-			System.out.println(createdTimeError.containsKey("created") );
-			if (createdTimeError.containsKey("created")) {
+		if(j == filteredValues.size()) {
+			dataBean.setDateCreated("no time moved");
+			dataBean.setDateModified("no time moved");
+			dataBean.setCurrentStatus("done");
+		}else {     
+			for (j = 0; j < filteredValues.size(); j++) {
 				String createdTime = filteredValues.get(0).getString("created");
 				dataBean.setDateCreated(createdTime);
 
 				String modifiedTime = filteredValues.get(filteredValues.size() - 1).getString("created");
 				dataBean.setDateModified(modifiedTime);
-			} else {
-				dataBean.setDateCreated("No createdtime");
-				dataBean.setDateModified("No modified date");
-			}
 
+				JsonObject value = filteredValues.get(j);
 
-			String reporter = value.getJsonObject("author").getString("displayName");
-			listOfAuthors.add(reporter);
-			dataBean.setReporter(reporter);
+				TransitionHistory histories = new TransitionHistory();
 
-			int k = 0;
-			if (k == stories.size()) {
-				dataBean.setStoryPoint("No Story Point");
-			}else {
-				JsonObject storyAll = stories.get(k);
-				String storyPoint = storyAll.getJsonArray("items").getJsonObject(0).getString("toString");
-				listOfPoints.add(storyPoint);
-				dataBean.setStoryPoint(storyPoint);
+				String fromString = value.getJsonArray("items").getJsonObject(0).getString("fromString");
+				histories.setFromString(fromString);
+
+				String toString = value.getJsonArray("items").getJsonObject(0).getString("toString");
+				listOfToString.add(toString);
+
+				String currentStatus = listOfToString.get(listOfToString.size() - 1);
+				dataBean.setCurrentStatus(currentStatus);
+				histories.setToString(toString);
+
+				dataBean.getHistories().add(histories);
 			}
 		}
-//		long totalMemeber = listOfAuthors.stream().distinct().count();
-//		System.out.println(totalMemeber);
-		
-		 //int sum = listOfPoints.stream().mapToInt(Integer::intValue).sum();
+		int k =0;
+		if(k == stories.size()) {
+			dataBean.setStoryPoint("0");
+		}else {
+			for(k = 0;k<stories.size(); k++) {
+				JsonObject storyAll = stories.get(k);
+
+				//	Double total = 0.0; 
+				String storyPoint = storyAll.getJsonArray("items").getJsonObject(0).getString("toString");
+				dataBean.setStoryPoint(storyPoint);
+				
+			}
+		}
 	}
 }
 
