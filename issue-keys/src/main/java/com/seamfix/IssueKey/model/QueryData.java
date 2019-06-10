@@ -21,7 +21,7 @@ public class QueryData {
 	private ArrayList<Issues> issues = new ArrayList<>();
 	private ArrayList<Parent> parent = new ArrayList<>();
 
-	private int productID;
+	private int projectID;
 	private int sprintID;
 	private long members;
 	private double totalPoints;
@@ -66,5 +66,13 @@ public class QueryData {
 		return sWriter.toString();
 
 	}
+
+	public void init(int projectID, int sprintID) {
+
+		this.projectID = projectID;
+		this.sprintID = sprintID;
+	}
+	
+	
 }
 

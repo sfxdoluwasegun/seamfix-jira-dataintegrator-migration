@@ -180,5 +180,6 @@
 		<module>projects</module>
 		<module>sprints</module>
 		<module>issue-keys</module>
+		<module>excel-file</module>
 	</modules>
 </project>

@@ -47,7 +47,8 @@ public class Workbook {
 
 
 	public  String sprintIssue() {
-		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board/87/sprint/532/issue?maxResults=100";
+		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board/"+dataBean.getProjectID()+"/sprint/"+dataBean.getSprintID()+"/issue?maxResults=100";
+		System.out.println(target);
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();

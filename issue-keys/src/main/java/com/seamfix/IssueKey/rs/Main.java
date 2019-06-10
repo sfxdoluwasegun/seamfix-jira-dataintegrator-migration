@@ -1,8 +1,9 @@
 package com.seamfix.IssueKey.rs;
 
 import javax.inject.Inject;
-import javax.ws.rs.POST;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import com.seamfix.IssueKey.model.QueryData;
@@ -17,10 +18,11 @@ public class Main {
 	@Inject
 	QueryData dataBean;
 	
-	@POST
-	@Path("/keys")
-	public Response call() {
-		workbook.getKeys();
+	@GET
+	@Path("/{projectID}/{sprintID}")
+	public Response call(@PathParam("projectID") int projectID, @PathParam("sprintID") int sprintID) {
+		 dataBean.init( projectID, sprintID);
+		 workbook.getKeys();
 		
 		return Response.ok().entity(dataBean.getJSON()).type("application/json").build();
 	}

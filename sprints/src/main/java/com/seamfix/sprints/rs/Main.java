@@ -19,8 +19,8 @@ public class Main {
 	QueryData dataBean;
 	
 	@GET
-	@Path("/project/{productID}")
-	public Response callProject(@PathParam("productID") int projectID) {
+	@Path("/project/{projectID}")
+	public Response callProject(@PathParam("projectID") int projectID) {
 		 dataBean.init( projectID);
 		workbook.getJSON();
 		
