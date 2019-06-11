@@ -58,7 +58,7 @@ public class Workbook {
 		JsonObject root = Json.createReader(new StringReader(changeLogs(key))).readObject();
 
 
-
+		List<String> listOfFromString = new ArrayList<>();
 		List<String> listOfToString = new ArrayList<>();
 
 		
@@ -97,10 +97,13 @@ public class Workbook {
 				TransitionHistory histories = new TransitionHistory();
 
 				String fromString = value.getJsonArray("items").getJsonObject(0).getString("fromString");
+				listOfFromString.add(j,fromString);
+				dataBean.setFromString(listOfFromString);
 				histories.setFromString(fromString);
 
 				String toString = value.getJsonArray("items").getJsonObject(0).getString("toString");
-				listOfToString.add(toString);
+				listOfToString.add(j,toString);
+				dataBean.setToString(listOfToString);
 
 				String currentStatus = listOfToString.get(listOfToString.size() - 1);
 				dataBean.setCurrentStatus(currentStatus);

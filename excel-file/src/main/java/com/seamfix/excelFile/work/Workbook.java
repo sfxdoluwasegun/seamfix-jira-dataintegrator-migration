@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringReader;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,8 +18,13 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonWriter;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ServiceUnavailableException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
@@ -51,25 +57,31 @@ public class Workbook {
 		}
 	}
 
-	//	public String post(String jsonRequest) throws BadRequestException, ServiceUnavailableException, WebApplicationException {
-	//		String target ="http://localhost:8092/issue-keys/"+dataBean.getProjectID()+"/"+dataBean.getSprintID();
-	//		Client client = null;
-	//		try {
-	//			client = ClientBuilder.newClient();
-	//			return client.target(target.trim()).request()
-	//					.post(Entity.entity(jsonRequest, MediaType.APPLICATION_JSON), String.class);
-	//		} finally {
-	//			if (client != null)
-	//				client.close();
-	//		}
-	//	}
+	public String createJson(String key) {
 
-	//	private JsonObject recieveResponse(String json) {
-	//
-	//		String response = post(json);
-	//		return Json.createReader(new StringReader(response)).readObject();
-	//	}
-	//	
+		JsonObject json = Json.createObjectBuilder()
+				.add("key",key)
+				.build();
+		StringWriter sWriter = new StringWriter();
+		try (JsonWriter writer = Json.createWriter(sWriter)) {
+			writer.write(json);
+		}
+		return sWriter.toString();
+	}
+
+	public String recieveResponse(String key, String jsonRequest) throws BadRequestException, ServiceUnavailableException, WebApplicationException {
+		String target = "http://localhost:8088/changelog/"+key;
+		Client client = null;
+		try {
+			client = ClientBuilder.newClient();
+			return client.target(target.trim()).request()
+					.post(Entity.entity(jsonRequest, MediaType.APPLICATION_JSON), String.class);
+		} finally {
+			if (client != null)
+				client.close();
+		}
+	}
+
 	public void getFile() {
 		JsonArray root = Json.createReader(new StringReader(getIssue())).readArray();
 		BufferedWriter csvWriter = null;

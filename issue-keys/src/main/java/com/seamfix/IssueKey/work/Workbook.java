@@ -20,6 +20,7 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ServiceUnavailableException;
@@ -226,8 +227,8 @@ public class Workbook {
 		String path = "C:\\jcodes\\RND\\jira-dataintegrator\\";
 
 
-		List<String> listOfFromString = new ArrayList<>();
-		List<String> listOfToString = new ArrayList<>();
+		List<JsonValue> listOfFromString = new ArrayList<>();
+		List<JsonValue> listOfToString = new ArrayList<>();
 
 		for(int i = 0; i < filteredValues.size(); i++) {
 			JsonObject issue = filteredValues.get(i);
@@ -242,45 +243,29 @@ public class Workbook {
 			if(jsonObject == null) {
 				return;
 			}
-
-			JsonArray histories = jsonObject.getJsonArray("transitionHistory");
-			List<JsonObject> tHistories = histories
-					.stream()
-					.filter(history -> history.asJsonObject().containsKey("fromString"))
-					.map(history -> history.asJsonObject())
-					.collect(Collectors.toList());
-
-			String startDate = jsonObject.getString("startDate");
+            JsonObject issues = jsonObject.getJsonObject("issues");
+			
+			List<JsonValue> hFromString = jsonObject.getJsonObject("issues").getJsonArray("fromString");
+            listOfFromString.add((JsonValue) hFromString);
+            
+            List<JsonValue> hToString = jsonObject.getJsonObject("issues").getJsonArray("fromString");
+            listOfFromString.add((JsonValue) hToString);
+            
+			String startDate = issues.getString("startDate");
 			file.setDateCreated(startDate);
 
-			String endDate = jsonObject.getString("endDate");
+			String endDate = issues.getString("endDate");
 			file.setDateModified(endDate);
 
-			String currentStatus = jsonObject.getString("currentStatus");
+			String currentStatus = issues.getString("currentStatus");
 			file.setCurrentStatus(currentStatus);
 
 
-			String storyPoint = jsonObject.getString("storyPoint");
+			String storyPoint = issues.getString("storyPoint");
 			file.setStoryPoint(storyPoint);
 
 			String assignee = issue.getJsonObject("fields").getJsonObject("assignee").getString("displayName");
 			file.setAssignee(assignee);
-			for(int j = 0; j< tHistories.size(); j++) {
-				JsonObject history = tHistories.get(j);
-				String fromString = history.getString("fromString");
-				listOfFromString.add(fromString);
-				transtitionHistory.setFromString(fromString);
-
-
-				String toString = history.getString("toString");
-				listOfToString.add(toString);
-				transtitionHistory.setToString(toString);
-
-
-				dataBean.getHistory().add(transtitionHistory);
-
-				dataBean.getFile().add(file);
-			}
 
 			try {
 				File csvFile = new File(path +"csvfile.csv");
