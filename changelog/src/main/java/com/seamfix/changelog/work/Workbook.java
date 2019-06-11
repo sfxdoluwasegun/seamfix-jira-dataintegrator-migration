@@ -76,6 +76,8 @@ public class Workbook {
 				.filter(story -> story.asJsonObject().getJsonArray("items").getJsonObject(0).getString("field").equals("Story Points"))
 				.map(story -> story.asJsonObject())
 				.collect(Collectors.toList());
+		
+
 		int j=0;
 
 		if(j == filteredValues.size()) {

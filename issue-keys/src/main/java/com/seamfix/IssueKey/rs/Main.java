@@ -1,7 +1,7 @@
 package com.seamfix.IssueKey.rs;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
@@ -18,12 +18,20 @@ public class Main {
 	@Inject
 	QueryData dataBean;
 	
-	@GET
+	@POST
 	@Path("/{projectID}/{sprintID}")
 	public Response call(@PathParam("projectID") int projectID, @PathParam("sprintID") int sprintID) {
 		 dataBean.init( projectID, sprintID);
-		 workbook.getKeys();
+		 workbook.getParentKeys();
 		
 		return Response.ok().entity(dataBean.getJSON()).type("application/json").build();
+	}
+	
+	@POST
+	@Path("/file/{projectID}/{sprintID}")
+	public void callFile(@PathParam("projectID") int projectID, @PathParam("sprintID") int sprintID) {
+		 dataBean.init( projectID, sprintID);
+		 workbook.getAllIssues();
+		
 	}
 }
