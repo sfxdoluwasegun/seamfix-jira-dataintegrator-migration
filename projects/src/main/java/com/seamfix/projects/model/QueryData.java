@@ -25,6 +25,8 @@ public class QueryData {
 	private ArrayList<Project> projects = new ArrayList<>();
 	private ArrayList<Scrum> scrum = new ArrayList<>();
 	private ArrayList<Kanban> kanban = new ArrayList<>();
+	
+	private int projectSize;
 
 	private StringWriter sWriter = new StringWriter(); 
 
@@ -72,5 +74,11 @@ public class QueryData {
 
 	public void addProject(Project project) {
 		this.projects.add(project);
+	}
+
+
+	public void init(int projectSize) {
+		this.projectSize = projectSize;
+		
 	}
 }

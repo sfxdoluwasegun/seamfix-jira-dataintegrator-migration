@@ -41,7 +41,7 @@ public class Workbook {
 
 
 	public  String projects() {
-		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board";
+		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board?startAt="+dataBean.getProjectSize();
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
