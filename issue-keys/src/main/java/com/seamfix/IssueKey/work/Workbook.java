@@ -1,29 +1,21 @@
 package com.seamfix.IssueKey.work;
 
-import java.io.BufferedWriter;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Base64;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
-import javax.enterprise.inject.New;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.json.JsonValue;
 import javax.json.JsonWriter;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.ServiceUnavailableException;
@@ -32,24 +24,18 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response.Status;
 
 import org.apache.http.HttpHeaders;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.infinispan.persistence.modifications.Clear;
 
-import com.fasterxml.jackson.core.sym.Name;
 import com.seamfix.IssueKey.model.ExcelFile;
 import com.seamfix.IssueKey.model.Issues;
 import com.seamfix.IssueKey.model.Parent;
 import com.seamfix.IssueKey.model.QueryData;
-import com.seamfix.IssueKey.model.TranstitionHistory;
 
 
 @Dependent
