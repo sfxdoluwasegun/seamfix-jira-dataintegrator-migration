@@ -12,10 +12,13 @@ import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
+import javax.enterprise.inject.New;
 import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
@@ -33,9 +36,11 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.http.HttpHeaders;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.infinispan.persistence.modifications.Clear;
 
@@ -92,8 +97,7 @@ public class Workbook {
 		return sWriter.toString();
 	}
 
-	public String recieveResponse(String key, String jsonRequest) throws BadRequestException, ServiceUnavailableException, WebApplicationException {
-		String target = "http://localhost:8088/changelog/"+key;
+	public String recieveResponse(String target,String key, String jsonRequest) throws BadRequestException, ServiceUnavailableException, WebApplicationException {
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
@@ -106,12 +110,18 @@ public class Workbook {
 	}
 
 	private JsonObject postService(String key, String json) {
-
-		String response = recieveResponse(key, json);
+		String target = "http://localhost:8088/changelog/"+key;
+		String response = recieveResponse(target,key, json);
 		return Json.createReader(new StringReader(response)).readObject();
 	}
 
-	public List<JsonObject> getFilter() {
+	private JsonObject postLog(String key, String json) {
+		String target ="http://localhost:8087/getIssue/"+ key;
+		String response = recieveResponse(target,key, json);
+		return Json.createReader(new StringReader(response)).readObject();
+	}
+	public List<JsonObject> callLog() {
+
 		JsonObject root = Json.createReader(new StringReader(sprintIssue())).readObject();
 
 		JsonArray issues = root.getJsonArray("issues");
@@ -126,12 +136,13 @@ public class Workbook {
 		return filteredValues;
 	}
 	public void getParentKeys() {
-		List<JsonObject> filteredValues = getFilter();
+		List<JsonObject> filteredValues = callLog();
 
 		List<String> listOfAuthors = new ArrayList<>();
 		List<Double> listOfPoints = new ArrayList<>();
 		List<String> listOfName = new ArrayList<>();
 		List<Integer> listOfId = new ArrayList<>();
+		List<Double> listOfIncomplete = new ArrayList<>();
 
 		for(int i =0; i < filteredValues.size(); i++) {
 			Issues	issuesq  = new Issues();
@@ -160,197 +171,220 @@ public class Workbook {
 				String skey = issue.getString("key");
 				parent.setKey(skey);
 
+				String PAssignee = issue.getJsonObject("fields").getJsonObject("assignee").getString("displayName");
+				parent.setAssignee(PAssignee);
+
 				String jsonString = createJson(skey);
 
 				JsonObject jsonObject = postService(skey,jsonString);
+
+				JsonObject logObject = postLog(skey, jsonString);
+
+				if(logObject == null) {
+
+				}
+
+				String worklog = logObject.getString("Worklog");
+				parent.setWorklog(worklog);
+				System.out.println(worklog);
 
 				if(jsonObject == null) {
 					return;
 				}
 
-				String startDate = jsonObject.getString("startDate");
+				String startDate = jsonObject.getJsonObject("issues").getString("startDate");
 				parent.setDateCreated(startDate);
 
-				String endDate = jsonObject.getString("endDate");
+				String endDate = jsonObject.getJsonObject("issues").getString("endDate");
 				parent.setDateModified(endDate);
 
-				String currentStatus = jsonObject.getString("currentStatus");
+				String currentStatus = jsonObject.getJsonObject("issues").getString("currentStatus");
 				parent.setCurrentStatus(currentStatus);
 
-				String storyPoint = jsonObject.getString("storyPoint");
+				String storyPoint = jsonObject.getJsonObject("issues").getString("storyPoint");
 				parent.setStoryPoint(storyPoint);
 
 				Double sum = Double.parseDouble(storyPoint);
 				listOfPoints.add(sum);
 
-				String PAssignee = issue.getJsonObject("fields").getJsonObject("assignee").getString("displayName");
-				parent.setAssignee(PAssignee);
+
 
 				dataBean.getParent().add(parent);
-			}
 
-			JsonArray closedSprints = issue.getJsonObject("fields").getJsonArray("closedSprints");
-			if(!closedSprints.isEmpty()) {
-				if(closedSprints.size() == 1) {
-					int sprint = closedSprints.getJsonObject(0).getInt("id");
-					System.out.println(sprint);
-					String name = closedSprints.getJsonObject(0).getString("name");
-					System.out.println(name);
-				}
-				else {
-					for(int k =0; k < closedSprints.size(); k++) {
-						int sprint = closedSprints.getJsonObject(closedSprints.size() - 1).getInt("id");
-						listOfId.add(sprint);
-						System.out.println(listOfId);
-						String name = closedSprints.getJsonObject(closedSprints.size() - 1).getString("name");
-						listOfName.add(name);
-						System.out.println(listOfName);
+
+
+
+				if(!issue.getJsonObject("fields").containsKey("closedSprints")) {
+					System.out.println("no closed sprint");
+				}else {
+					JsonArray closedSprints = issue.getJsonObject("fields").getJsonArray("closedSprints");
+					int sprint = closedSprints.getJsonObject(closedSprints.size() - 1).getInt("id");
+					if(dataBean.getSprintID() != sprint) {
+						String incomplte = jsonObject.getJsonObject("issues").getString("storyPoint");
+						Double inCSum = Double.parseDouble(incomplte);
+						listOfIncomplete.add(inCSum);
+						System.out.println(incomplte);
 					}
 				}
-
 			}
 		}
 		long totalMemebers = listOfAuthors.stream().distinct().count();	
 		dataBean.setMembers(totalMemebers);
 
+
 		Double totalPoints = listOfPoints.stream().mapToDouble(Double::doubleValue).sum();
+		System.out.println(totalPoints);
 		dataBean.setTotalPoints(totalPoints);
+
+		Double points = listOfIncomplete.stream().mapToDouble(Double::doubleValue).sum();
+		Double incompletePoints = totalPoints - points;
+		System.out.println(incompletePoints);
+		dataBean.setCompletePoints(incompletePoints);
 
 	}
 
 	public void getAllIssues() {
-		List<JsonObject> filteredValues = getFilter();
-		ExcelFile file = new ExcelFile();
-		TranstitionHistory transtitionHistory = new TranstitionHistory();
+		List<JsonObject> filteredValues = callLog();
 
-		BufferedWriter csvWriter = null;
-		String path = "C:\\jcodes\\RND\\jira-dataintegrator\\";
-
-
-		List<JsonValue> listOfFromString = new ArrayList<>();
-		List<JsonValue> listOfToString = new ArrayList<>();
 
 		for(int i = 0; i < filteredValues.size(); i++) {
-			JsonObject issue = filteredValues.get(i);
+			ExcelFile file = new ExcelFile();
+			List<String> listOfFromString = new ArrayList<>();
+			List<String> listOfToString = new ArrayList<>();
+			JsonObject allIssues = filteredValues.get(i);
 
-			String key = issue.getString("key");
+			String key = allIssues.getString("key");
 			file.setKey(key);
+
+			String assignee = allIssues.getJsonObject("fields").getJsonObject("assignee").getString("displayName");
+			file.setAssignee(assignee);
 
 			String jsonString = createJson(key);
 
 			JsonObject jsonObject = postService(key,jsonString);
 
+			JsonObject logObject = postLog(key, jsonString);
+
+			if(logObject == null) {
+
+			}
+
+			String worklog = logObject.getString("Worklog");
+			file.setWorklog(worklog);
+			System.out.println(worklog);
+
 			if(jsonObject == null) {
 				return;
 			}
-            JsonObject issues = jsonObject.getJsonObject("issues");
-			
-			List<JsonValue> hFromString = jsonObject.getJsonObject("issues").getJsonArray("fromString");
-            listOfFromString.add((JsonValue) hFromString);
-            
-            List<JsonValue> hToString = jsonObject.getJsonObject("issues").getJsonArray("fromString");
-            listOfFromString.add((JsonValue) hToString);
-            
-			String startDate = issues.getString("startDate");
+			JsonObject json = jsonObject.getJsonObject("issues");
+
+			String startDate = json.getString("startDate");
 			file.setDateCreated(startDate);
 
-			String endDate = issues.getString("endDate");
+			String endDate = json.getString("endDate");
 			file.setDateModified(endDate);
 
-			String currentStatus = issues.getString("currentStatus");
+			String currentStatus = json.getString("currentStatus");
 			file.setCurrentStatus(currentStatus);
 
 
-			String storyPoint = issues.getString("storyPoint");
+			String storyPoint = json.getString("storyPoint");
 			file.setStoryPoint(storyPoint);
 
-			String assignee = issue.getJsonObject("fields").getJsonObject("assignee").getString("displayName");
-			file.setAssignee(assignee);
+			JsonArray hFromString = json.getJsonObject("flow").getJsonArray("fromString");
+			for(int j =0; j< hFromString.size(); j++) {
+				String fromString = hFromString.getString(j);
+				listOfFromString.add(fromString);
+			}
+			file.setFromString(listOfFromString);
+			System.out.println(listOfFromString);
 
+			JsonArray hToString = json.getJsonObject("flow").getJsonArray("toString");
+			for(int k =0; k< hFromString.size(); k++) {
+				String toString = hToString.getString(k);
+				listOfToString.add(toString);
+			}
+			file.setToString(listOfToString);
+			System.out.println(listOfToString);
+
+			dataBean.getFile().add(file);
+
+			//create blank workbook
+			XSSFWorkbook workbook = new XSSFWorkbook(); 
+
+			//Create a blank sheet
+			XSSFSheet sheet = workbook.createSheet("Sprint");
+
+			// Create a Row
+			Row headerRow = sheet.createRow(0);
+
+			// Create cells
+			String[] columns = {"key","assignee","startDate","endDate","currentStatus","storyPoint","Worklog","Transtition History"};
+
+			for(int n = 0; n < columns.length; n++) {
+				Cell cell = headerRow.createCell(n);
+				cell.setCellValue(columns[n]);
+
+				//to enable newlines you need set a cell styles with wrap=true
+				CellStyle cs = workbook.createCellStyle();
+				cs.setWrapText(true);
+				cell.setCellStyle(cs);
+			}
+
+			// Create Other rows and cells with data
+			int rowNum = 1;
+			for(ExcelFile excelFile: dataBean.getFile()) {
+				Row row = sheet.createRow(rowNum++);
+
+				row.createCell(0)
+				.setCellValue(excelFile.getKey());
+
+				row.createCell(1)
+				.setCellValue(excelFile.getAssignee());
+
+				row.createCell(2)
+				.setCellValue(excelFile.getDateCreated());
+
+				row.createCell(3)
+				.setCellValue(excelFile.getDateModified());
+
+				row.createCell(4)
+				.setCellValue(excelFile.getCurrentStatus());
+
+				row.createCell(5)
+				.setCellValue(excelFile.getStoryPoint());
+
+				row.createCell(6)
+				.setCellValue(excelFile.getWorklog());
+
+				row.createCell(7)
+				.setCellValue(excelFile.getFromString().toString().replaceAll(",", " -> ")+" \n " +excelFile.getToString().toString().replaceAll(",", " -> "));
+
+			}
+			// Resize all columns to fit the content size
+			for(int p = 0; p < columns.length; p++) {
+				sheet.autoSizeColumn(p);
+			}
+			// Write the output to a file
+			String path = "/Users/lola/Desktop/jcodes/RND/jira-dataintegrator/";
+			FileOutputStream fileOut = null;
 			try {
-				File csvFile = new File(path +"csvfile.csv");
-				csvWriter = new BufferedWriter(new FileWriter(csvFile));
-				String line = new StringBuilder()
-
-						.append("Task ID")
-						.append(",")
-						.append("Start Date")
-						.append(",")
-						.append("End Date")
-						.append(",")
-						.append("Story Point")
-						.append(",")
-						.append("Author")
-						.append(",")
-						.append("Worklog")
-						.append(',')
-						.append("Current Status")
-						.append(",")
-						.append("Status History")
-						.append('\n')
-
-						.append(key)
-						.append(",")
-						.append(startDate)
-						.append(",")
-						.append(endDate)
-						.append(",")
-						.append(storyPoint)
-						.append(",")
-						.append(assignee)
-						.append(",")
-						.append("working on it")
-						.append(",")
-						.append(currentStatus)
-						.append(",")
-						.append((transtitionHistory.getFromString()+","+transtitionHistory.getToString()).toString())
-						.toString();
-				System.out.println(line);
-				csvWriter.write(line);
-				csvWriter.newLine();
-				csvWriter.flush(); 
-				csvWriter.close();
-			} catch (IOException e) {
-			}
-
-			XSSFWorkbook wb = new XSSFWorkbook();
-			CreationHelper createHelper = wb.getCreationHelper();
-			Sheet sheet = wb.createSheet("new sheet");
-
-
-
-			System.out.println(issue.size());
-
-			// Create a row and put some cells in it. Rows are 0 based.
-			Row row = sheet.createRow(i);
-			// Create a cell and put a value in it.
-			Cell cell = row.createCell(0);
-			cell.setCellValue(key);
-
-			// Or do it on one line.
-			row.createCell(1).setCellValue(startDate);
-			row.createCell(2).setCellValue(endDate);
-			row.createCell(3).setCellValue(currentStatus);
-			row.createCell(4).setCellValue(storyPoint);
-			row.createCell(5).setCellValue(assignee);
-			for(int l = 0; l< listOfFromString.size(); l++) {
-				row.createCell(6).setCellValue(transtitionHistory.getFromString()+" -> " + transtitionHistory.getToString());
-				listOfFromString.clear();
-				listOfToString.clear();
-			}
-			try (OutputStream fileOut = new FileOutputStream(path + "workbook.xls")) {
-				wb.write(fileOut);
+				fileOut = new FileOutputStream(path+dataBean.getSprintID()+"-"+"Sprint.xlsx");
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
+			}
+			try {
+				workbook.write(fileOut);
+				fileOut.close();
+				// Closing the workbook
+				workbook.close();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}	
+		}
 	}
 }
-
 
 
 

@@ -13,4 +13,5 @@ public class Parent {
 	private String dateModified;
 	private String assignee;
 	private String currentStatus;
+	private String worklog;
 }

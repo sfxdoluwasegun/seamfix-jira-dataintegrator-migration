@@ -81,7 +81,8 @@ public class Workbook {
 			project.setName(name);
 
 			int id = values.asJsonArray().getJsonObject(i).getInt("id");
-			project.setId(id);			
+			project.setId(id);
+			
 			String startDate = values.asJsonArray().getJsonObject(i).getString("startDate");
 			project.setStartDate(startDate);
 

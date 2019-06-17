@@ -3,5 +3,5 @@ swarm:
   bind:
     address: localhost
   port:
-    offset: 3
+    offset: 7
   # Example of passing in token verification information via project file

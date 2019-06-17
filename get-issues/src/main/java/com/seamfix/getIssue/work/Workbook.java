@@ -56,10 +56,17 @@ public class Workbook {
 
 		boolean workLogJson = values.asJsonObject().getJsonObject("worklog")
 				.getJsonArray("worklogs").isEmpty();
-
 		if(workLogJson) {
 			dataBean.setWorklog("No Worklog");
-		} else {
+		} 
+		else if (!values.asJsonObject().getJsonObject("worklog")
+				.getJsonArray("worklogs").getJsonObject(0).containsKey("comment")) {
+			dataBean.setWorklog("No Worklog");
+		}
+		else if(values.asJsonObject().getJsonObject("worklog")
+				.getJsonArray("worklogs").getJsonObject(0).getJsonObject("comment").isEmpty()) {
+			dataBean.setWorklog("No Worklog");
+		}else {
 			String worklog = values.asJsonObject().getJsonObject("worklog")
 					.getJsonArray("worklogs").getJsonObject(0).getJsonObject("comment")
 					.getJsonArray("content").getJsonObject(0).getJsonArray("content").getJsonObject(0).getString("text");

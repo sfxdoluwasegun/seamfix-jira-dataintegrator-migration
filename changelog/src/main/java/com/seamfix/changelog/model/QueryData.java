@@ -29,9 +29,6 @@ public class QueryData {
 	private List<String> toString;
 	private List<String> fromString;
 
-		
-    private ArrayList<TransitionHistory> histories = new ArrayList<>();
-
 	private StringWriter sWriter = new StringWriter(); 
 
 	public String rsJSON() {
@@ -44,17 +41,21 @@ public class QueryData {
 				.add("currentStatus", getCurrentStatus())
 				.add("storyPoint", getStoryPoint());
 		
-		JsonArrayBuilder toStringBuilder = Json.createArrayBuilder();
-		for(String toString :  getToString()) {
-			toStringBuilder.add(toString);
-		}
-
-		JsonArrayBuilder fromStringBuilder = Json.createArrayBuilder();
+		JsonObjectBuilder toStringBuilder = Json.createObjectBuilder();
+		
+		JsonArrayBuilder fromBuilder = Json.createArrayBuilder();
 		for(String fromString : getFromString()) {
-			fromStringBuilder.add(fromString);
+			fromBuilder.add(fromString);
 		}
-		json.add("fromString",fromStringBuilder);
-		json.add("toString", toStringBuilder);
+		JsonArrayBuilder toBuilder = Json.createArrayBuilder();
+		for(String toString :  getToString()) {
+			toBuilder.add(toString);
+		}
+		
+		toStringBuilder.add("fromString",fromBuilder);
+		toStringBuilder.add("toString",toBuilder);
+		
+		json.add("flow", toStringBuilder);
 		arrayBuilder.add("issues", json);
 		
 		try (JsonWriter writer = Json.createWriter(sWriter)) {

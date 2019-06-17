@@ -2,6 +2,7 @@ package com.seamfix.IssueKey.model;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.json.Json;
@@ -23,19 +24,21 @@ public class QueryData {
 	private ArrayList<Issues> issues = new ArrayList<>();
 	private ArrayList<Parent> parent = new ArrayList<>();
 	private ArrayList<ExcelFile> file = new ArrayList<>();
-	private ArrayList<TranstitionHistory> history = new ArrayList<>();
 	
 	private int projectID;
 	private int sprintID;
+	private int sprint;
+	private String name;
 	private long members;
 	private double totalPoints;
-
-
+	private double completePoints;
+	
 	private StringWriter sWriter = new StringWriter();
 
 	public String getJSON() {
 		JsonObjectBuilder json = Json.createObjectBuilder()
 				.add("totalMember", getMembers())
+				.add("completePoints", getCompletePoints())
 				.add("totalPoints", getTotalPoints());
 		JsonArrayBuilder parentBuilder = Json.createArrayBuilder();
 		for(Parent parent : getParent()) {
@@ -46,7 +49,9 @@ public class QueryData {
 					.add("assignee", parent.getAssignee())
 					.add("endDate", parent.getDateModified())
 					.add("currentStatus", parent.getCurrentStatus())
+					.add("Worklog", parent.getWorklog())
 					.add("storyPoint", parent.getStoryPoint());
+			
 			parentBuilder.add(object);
 		}
 
@@ -69,37 +74,6 @@ public class QueryData {
 		return sWriter.toString();
 
 	}
-
-//	public String excelFile() {
-//
-//		JsonObjectBuilder json = Json.createObjectBuilder();
-//		for(File file : getFile()) {
-//			JsonObjectBuilder object = Json.createObjectBuilder()
-//					.add("key", file.getKey())
-//					.add("startDate", file.getDateCreated())
-//					.add("assignee", file.getAssignee())
-//					.add("endDate", file.getDateModified())
-//					.add("currentStatus", file.getCurrentStatus())
-//					.add("storyPoint", file.getStoryPoint());
-//			
-//			JsonArrayBuilder toStringBuilder = Json.createArrayBuilder();
-//			
-//			for(TranstitionHistory thistory : getHistory()) {
-//				JsonObjectBuilder tobject = Json.createObjectBuilder()
-//						.add("fromString", (JsonValue) thistory.getFromString())
-//						.add("toString", (JsonValue) thistory.getToString());
-//				toStringBuilder.add(tobject);
-//			}
-//			object.add("toString", toStringBuilder);
-//								json.add( "issues", object);
-//		
-//		}
-//
-//		try (JsonWriter writer = Json.createWriter(sWriter)) {
-//			writer.write(json.build());
-//		}
-//		return sWriter.toString();
-//	}
 
 	public void init(int projectID, int sprintID) {
 

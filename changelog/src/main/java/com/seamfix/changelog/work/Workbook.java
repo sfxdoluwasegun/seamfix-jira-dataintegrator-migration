@@ -19,7 +19,6 @@ import javax.ws.rs.core.MediaType;
 import org.apache.http.HttpHeaders;
 
 import com.seamfix.changelog.model.QueryData;
-import com.seamfix.changelog.model.TransitionHistory;
 
 @Dependent
 public class Workbook {
@@ -70,6 +69,7 @@ public class Workbook {
 				.filter(value -> value.asJsonObject().getJsonArray("items").getJsonObject(0).getString("field").equals("status"))
 				.map(value -> value.asJsonObject())
 				.collect(Collectors.toList());
+		System.out.println(filteredValues.size());
 
 		List<JsonObject> stories = values
 				.stream()
@@ -78,40 +78,55 @@ public class Workbook {
 				.collect(Collectors.toList());
 		
 
-		int j=0;
+		int i=0;
+		if(i == filteredValues.size()) {
+			dataBean.setDateCreated("No Time Moved");
+			dataBean.setDateModified("No Time Moved");
+			dataBean.setCurrentStatus("Closed");
+			
+			String fromString ="Open";
+			listOfFromString.add(fromString);
+			dataBean.setFromString(listOfFromString);
 
-		if(j == filteredValues.size()) {
-			dataBean.setDateCreated("no time moved");
-			dataBean.setDateModified("no time moved");
-			dataBean.setCurrentStatus("done");
+			String toString = "Closed";
+			listOfToString.add(toString);
+			dataBean.setToString(listOfToString);
 		}else {     
-			for (j = 0; j < filteredValues.size(); j++) {
+			for (int j = 0; j < filteredValues.size(); j++) {
 				String createdTime = filteredValues.get(0).getString("created");
 				dataBean.setDateCreated(createdTime);
 
 				String modifiedTime = filteredValues.get(filteredValues.size() - 1).getString("created");
 				dataBean.setDateModified(modifiedTime);
+				
 
 				JsonObject value = filteredValues.get(j);
 
-				TransitionHistory histories = new TransitionHistory();
-
+               
 				String fromString = value.getJsonArray("items").getJsonObject(0).getString("fromString");
 				listOfFromString.add(j,fromString);
 				dataBean.setFromString(listOfFromString);
-				histories.setFromString(fromString);
+				System.out.println(listOfFromString);
 
 				String toString = value.getJsonArray("items").getJsonObject(0).getString("toString");
 				listOfToString.add(j,toString);
+				
+				System.out.println(listOfToString);
 				dataBean.setToString(listOfToString);
-
+				
+				
+				
+			    
+				if(listOfToString.size() == 1) {
+					String currentStatus = listOfToString.get(0);
+					dataBean.setCurrentStatus(currentStatus);
+				}else {
 				String currentStatus = listOfToString.get(listOfToString.size() - 1);
 				dataBean.setCurrentStatus(currentStatus);
-				histories.setToString(toString);
-
-				dataBean.getHistories().add(histories);
+				}
 			}
 		}
+		
 		int k =0;
 		if(k == stories.size()) {
 			dataBean.setStoryPoint("0");
@@ -119,7 +134,6 @@ public class Workbook {
 			for(k = 0;k<stories.size(); k++) {
 				JsonObject storyAll = stories.get(k);
 
-				//	Double total = 0.0; 
 				String storyPoint = storyAll.getJsonArray("items").getJsonObject(0).getString("toString");
 				dataBean.setStoryPoint(storyPoint);
 				
