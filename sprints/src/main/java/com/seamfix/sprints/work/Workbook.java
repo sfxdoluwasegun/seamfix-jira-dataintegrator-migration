@@ -39,7 +39,7 @@ public class Workbook {
 
 
 	public  String sprints() {
-		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board/" + dataBean.getProjectID() +"/sprint";
+		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board/" + dataBean.getProjectID() +"/sprint/";
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
@@ -83,12 +83,16 @@ public class Workbook {
 			int id = values.asJsonArray().getJsonObject(i).getInt("id");
 			project.setId(id);
 			
+			if(!values.asJsonArray().getJsonObject(i).containsKey("startDate")) {
+				project.setStartDate("No Start Date");
+				project.setEndDate("No End Date");
+			}else{
 			String startDate = values.asJsonArray().getJsonObject(i).getString("startDate");
 			project.setStartDate(startDate);
 
 			String endDate = values.asJsonArray().getJsonObject(i).getString("endDate");
 			project.setEndDate(endDate);
-			
+			}
 			dataBean.getProject().add(project);
 		}
 	}
@@ -99,11 +103,16 @@ public class Workbook {
 		int id = root.getInt("id");
 		dataBean.setSprintID(id);
 		
+		if(!root.containsKey("startDate")) {
+			dataBean.setStartDate("No Start Date");
+			dataBean.setEndDate("No End Date");
+		}else {
 		String startDate = root.getString("startDate");
 		dataBean.setStartDate(startDate);
 		
 		String endDate = root.getString("endDate");
 		dataBean.setEndDate(endDate);
+		}
 	}
 
 }
