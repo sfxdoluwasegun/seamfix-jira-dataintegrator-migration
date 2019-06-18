@@ -126,8 +126,6 @@ public class Workbook {
 
 		List<String> listOfAuthors = new ArrayList<>();
 		List<Double> listOfPoints = new ArrayList<>();
-		List<String> listOfName = new ArrayList<>();
-		List<Integer> listOfId = new ArrayList<>();
 		List<Double> listOfIncomplete = new ArrayList<>();
 
 		for(int i =0; i < filteredValues.size(); i++) {
@@ -193,12 +191,7 @@ public class Workbook {
 				Double sum = Double.parseDouble(storyPoint);
 				listOfPoints.add(sum);
 
-
-
 				dataBean.getParent().add(parent);
-
-
-
 
 				if(!issue.getJsonObject("fields").containsKey("closedSprints")) {
 					System.out.println("no closed sprint");
@@ -209,7 +202,6 @@ public class Workbook {
 						String incomplte = jsonObject.getJsonObject("issues").getString("storyPoint");
 						Double inCSum = Double.parseDouble(incomplte);
 						listOfIncomplete.add(inCSum);
-						System.out.println(incomplte);
 					}
 				}
 			}
@@ -219,12 +211,10 @@ public class Workbook {
 
 
 		Double totalPoints = listOfPoints.stream().mapToDouble(Double::doubleValue).sum();
-		System.out.println(totalPoints);
 		dataBean.setTotalPoints(totalPoints);
 
 		Double points = listOfIncomplete.stream().mapToDouble(Double::doubleValue).sum();
 		Double incompletePoints = totalPoints - points;
-		System.out.println(incompletePoints);
 		dataBean.setCompletePoints(incompletePoints);
 
 	}
@@ -257,7 +247,6 @@ public class Workbook {
 
 			String worklog = logObject.getString("Worklog");
 			file.setWorklog(worklog);
-			System.out.println(worklog);
 
 			if(jsonObject == null) {
 				return;
@@ -283,7 +272,6 @@ public class Workbook {
 				listOfFromString.add(fromString);
 			}
 			file.setFromString(listOfFromString);
-			System.out.println(listOfFromString);
 
 			JsonArray hToString = json.getJsonObject("flow").getJsonArray("toString");
 			for(int k =0; k< hFromString.size(); k++) {
@@ -291,7 +279,6 @@ public class Workbook {
 				listOfToString.add(toString);
 			}
 			file.setToString(listOfToString);
-			System.out.println(listOfToString);
 
 			dataBean.getFile().add(file);
 
@@ -305,7 +292,7 @@ public class Workbook {
 			Row headerRow = sheet.createRow(0);
 
 			// Create cells
-			String[] columns = {"key","assignee","startDate","endDate","currentStatus","storyPoint","Worklog","Transtition History"};
+			String[] columns = {"Key","Assignee","Start Date","End Date","Current Status","storyPoint","Worklog","Transtition History"};
 
 			for(int n = 0; n < columns.length; n++) {
 				Cell cell = headerRow.createCell(n);
@@ -352,7 +339,7 @@ public class Workbook {
 				sheet.autoSizeColumn(p);
 			}
 			// Write the output to a file
-			String path = "/Users/lola/Desktop/jcodes/RND/jira-dataintegrator/";
+			String path = "C:\\jcodes\\RND\\jira-dataintegrator\\";
 			FileOutputStream fileOut = null;
 			try {
 				fileOut = new FileOutputStream(path+dataBean.getSprintID()+"-"+"Sprint.xlsx");
@@ -365,7 +352,6 @@ public class Workbook {
 				// Closing the workbook
 				workbook.close();
 			} catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
