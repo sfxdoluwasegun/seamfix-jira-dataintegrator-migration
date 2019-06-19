@@ -182,5 +182,6 @@
 		<module>issue-keys</module>
 		<module>excel-file</module>
 		<module>login</module>
+		<module>kanban</module>
 	</modules>
 </project>
