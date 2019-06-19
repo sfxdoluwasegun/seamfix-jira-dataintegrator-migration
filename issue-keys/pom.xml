@@ -10,7 +10,7 @@
 
 	<packaging>war</packaging>
 	<artifactId>issue-keys</artifactId>
-	<name>IssueKeys</name>
+	<name>IssueKeys Microservice</name>
 
 	<build>
 		<finalName>${project.artifactId}</finalName>
@@ -132,6 +132,5 @@
 			<url>http://nexus.seamfix.com/nexus/content/repositories</url>
 		</repository>
 	</repositories>
-
 
 </project>

@@ -181,5 +181,6 @@
 		<module>sprints</module>
 		<module>issue-keys</module>
 		<module>excel-file</module>
+		<module>login</module>
 	</modules>
 </project>

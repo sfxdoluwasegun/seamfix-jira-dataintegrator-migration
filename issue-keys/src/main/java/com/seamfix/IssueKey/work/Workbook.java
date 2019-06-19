@@ -8,6 +8,8 @@ import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Base64;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -265,7 +267,8 @@ public class Workbook {
 
 			String storyPoint = json.getString("storyPoint");
 			file.setStoryPoint(storyPoint);
-
+			
+			
 			JsonArray hFromString = json.getJsonObject("flow").getJsonArray("fromString");
 			for(int j =0; j< hFromString.size(); j++) {
 				String fromString = hFromString.getString(j);
@@ -273,12 +276,10 @@ public class Workbook {
 			}
 			file.setFromString(listOfFromString);
 
-			JsonArray hToString = json.getJsonObject("flow").getJsonArray("toString");
-			for(int k =0; k< hFromString.size(); k++) {
-				String toString = hToString.getString(k);
-				listOfToString.add(toString);
-			}
-			file.setToString(listOfToString);
+			listOfFromString.add(currentStatus);
+			int count = Collections.frequency(listOfFromString, "In QA Review");
+			System.out.println(Collections.frequency(listOfFromString, "In QA Review"));
+            file.setCount(count);
 
 			dataBean.getFile().add(file);
 
@@ -292,7 +293,7 @@ public class Workbook {
 			Row headerRow = sheet.createRow(0);
 
 			// Create cells
-			String[] columns = {"Key","Assignee","Start Date","End Date","Current Status","storyPoint","Worklog","Transtition History"};
+			String[] columns = {"Key","Assignee","Start Date","End Date","Current Status","storyPoint","Worklog","Transition History","QA Review"};
 
 			for(int n = 0; n < columns.length; n++) {
 				Cell cell = headerRow.createCell(n);
@@ -331,7 +332,10 @@ public class Workbook {
 				.setCellValue(excelFile.getWorklog());
 
 				row.createCell(7)
-				.setCellValue(excelFile.getFromString().toString().replaceAll(",", " -> ")+" \n " +excelFile.getToString().toString().replaceAll(",", " -> "));
+				.setCellValue(excelFile.getFromString().toString().replaceAll(",", " -> "));
+				
+				row.createCell(8)
+				.setCellValue(excelFile.getCount());
 
 			}
 			// Resize all columns to fit the content size
@@ -342,7 +346,7 @@ public class Workbook {
 			String path = "C:\\jcodes\\RND\\jira-dataintegrator\\";
 			FileOutputStream fileOut = null;
 			try {
-				fileOut = new FileOutputStream(path+dataBean.getSprintID()+"-"+"Sprint.xlsx");
+				fileOut = new FileOutputStream(path + dataBean.getSprintID()+"-"+"Sprint.xlsx");
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
