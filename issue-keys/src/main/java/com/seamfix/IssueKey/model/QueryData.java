@@ -2,16 +2,12 @@ package com.seamfix.IssueKey.model;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
 import javax.json.JsonWriter;
-
 
 import lombok.Getter;
 import lombok.Setter;
@@ -41,6 +37,7 @@ public class QueryData {
 				.add("completePoints", getCompletePoints())
 				.add("totalPoints", getTotalPoints());
 		JsonArrayBuilder parentBuilder = Json.createArrayBuilder();
+		
 		for(Parent parent : getParent()) {
 			JsonObjectBuilder object = Json.createObjectBuilder()
 					.add("id",  parent.getId())
@@ -75,10 +72,9 @@ public class QueryData {
 
 	}
 
-	public void init(int projectID, int sprintID) {
+	public void init(int projectID) {
 
 		this.projectID = projectID;
-		this.sprintID = sprintID;
 	}
 
 

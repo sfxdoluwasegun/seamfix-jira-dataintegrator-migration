@@ -58,7 +58,7 @@ public class Workbook {
 
 
 	public  String sprintIssue() {
-		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board/"+dataBean.getProjectID()+"/sprint/"+dataBean.getSprintID()+"/issue?maxResults=100";
+		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board/"+dataBean.getProjectID()+"/issue?maxResults=100";
 		System.out.println(target);
 		Client client = null;
 		try {
@@ -197,6 +197,7 @@ public class Workbook {
 
 				if(!issue.getJsonObject("fields").containsKey("closedSprints")) {
 					System.out.println("no closed sprint");
+					
 				}else {
 					JsonArray closedSprints = issue.getJsonObject("fields").getJsonArray("closedSprints");
 					int sprint = closedSprints.getJsonObject(closedSprints.size() - 1).getInt("id");
@@ -228,7 +229,6 @@ public class Workbook {
 		for(int i = 0; i < filteredValues.size(); i++) {
 			ExcelFile file = new ExcelFile();
 			List<String> listOfFromString = new ArrayList<>();
-			List<String> listOfToString = new ArrayList<>();
 			JsonObject allIssues = filteredValues.get(i);
 
 			String key = allIssues.getString("key");
@@ -264,7 +264,6 @@ public class Workbook {
 			String currentStatus = json.getString("currentStatus");
 			file.setCurrentStatus(currentStatus);
 
-
 			String storyPoint = json.getString("storyPoint");
 			file.setStoryPoint(storyPoint);
 			
@@ -275,11 +274,16 @@ public class Workbook {
 				listOfFromString.add(fromString);
 			}
 			file.setFromString(listOfFromString);
-
+             
 			listOfFromString.add(currentStatus);
-			int count = Collections.frequency(listOfFromString, "In QA Review");
+			if(!listOfFromString.contains("In QA Review")) {
+				file.setCount("No QA Review");
+			} else {
+			int number = Collections.frequency(listOfFromString, "In QA Review");
 			System.out.println(Collections.frequency(listOfFromString, "In QA Review"));
+			String count = String.valueOf(number);
             file.setCount(count);
+			}
 
 			dataBean.getFile().add(file);
 
@@ -312,30 +316,39 @@ public class Workbook {
 
 				row.createCell(0)
 				.setCellValue(excelFile.getKey());
+				System.out.println(excelFile.getKey());
 
 				row.createCell(1)
 				.setCellValue(excelFile.getAssignee());
+				System.out.println(excelFile.getAssignee());
 
 				row.createCell(2)
 				.setCellValue(excelFile.getDateCreated());
+				System.out.println(excelFile.getDateCreated());
 
 				row.createCell(3)
 				.setCellValue(excelFile.getDateModified());
+				System.out.println(excelFile.getDateModified());
 
 				row.createCell(4)
 				.setCellValue(excelFile.getCurrentStatus());
+				System.out.println(excelFile.getCurrentStatus());
 
 				row.createCell(5)
 				.setCellValue(excelFile.getStoryPoint());
+				System.out.println(excelFile.getStoryPoint());
 
 				row.createCell(6)
 				.setCellValue(excelFile.getWorklog());
+				System.out.println(excelFile.getWorklog());
 
 				row.createCell(7)
 				.setCellValue(excelFile.getFromString().toString().replaceAll(",", " -> "));
+				System.out.println(excelFile.getFromString());
 				
 				row.createCell(8)
 				.setCellValue(excelFile.getCount());
+				System.out.println(excelFile.getCount());
 
 			}
 			// Resize all columns to fit the content size
@@ -346,7 +359,7 @@ public class Workbook {
 			String path = "C:\\jcodes\\RND\\jira-dataintegrator\\";
 			FileOutputStream fileOut = null;
 			try {
-				fileOut = new FileOutputStream(path + dataBean.getSprintID()+"-"+"Sprint.xlsx");
+				fileOut = new FileOutputStream(path + dataBean.getProjectID()+"-"+"Log.xlsx");
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}

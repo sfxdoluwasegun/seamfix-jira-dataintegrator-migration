@@ -18,8 +18,7 @@ public class ExcelFile {
 	private String assignee;
 	private String currentStatus;
 	private String worklog;
-    
-	private int count;
+	private String count;
 
 	private List<String> fromString = new ArrayList<>();
 	
