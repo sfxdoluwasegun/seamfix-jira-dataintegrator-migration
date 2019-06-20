@@ -1,5 +1,8 @@
 package com.seamfix.kanban.work;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
@@ -24,6 +27,11 @@ import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpHeaders;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import com.seamfix.kanban.models.ExcelFile;
 import com.seamfix.kanban.models.Issues;
@@ -282,6 +290,92 @@ public class Workbook {
 
 			dataBean.getFile().add(file);
 
+			//create blank workbook
+			XSSFWorkbook workbook = new XSSFWorkbook(); 
+
+			//Create a blank sheet
+			XSSFSheet sheet = workbook.createSheet("Sprint");
+
+			// Create a Row
+			Row headerRow = sheet.createRow(0);
+
+			// Create cells
+			String[] columns = {"Key","Assignee","Start Date","End Date","Current Status","storyPoint","Worklog","Transition History","QA Review"};
+
+			for(int n = 0; n < columns.length; n++) {
+				Cell cell = headerRow.createCell(n);
+				cell.setCellValue(columns[n]);
+
+				//to enable newlines you need set a cell styles with wrap=true
+				CellStyle cs = workbook.createCellStyle();
+				cs.setWrapText(true);
+				cell.setCellStyle(cs);
+			}
+
+			// Create Other rows and cells with data
+			int rowNum = 1;
+			for(ExcelFile excelFile: dataBean.getFile()) {
+				Row row = sheet.createRow(rowNum++);
+
+				row.createCell(0)
+				.setCellValue(excelFile.getKey());
+				System.out.println(excelFile.getKey());
+
+				row.createCell(1)
+				.setCellValue(excelFile.getAssignee());
+				System.out.println(excelFile.getAssignee());
+
+				row.createCell(2)
+				.setCellValue(excelFile.getDateCreated());
+				System.out.println(excelFile.getDateCreated());
+
+				row.createCell(3)
+				.setCellValue(excelFile.getDateModified());
+				System.out.println(excelFile.getDateModified());
+
+				row.createCell(4)
+				.setCellValue(excelFile.getCurrentStatus());
+				System.out.println(excelFile.getCurrentStatus());
+
+				row.createCell(5)
+				.setCellValue(excelFile.getStoryPoint());
+				System.out.println(excelFile.getStoryPoint());
+
+
+				row.createCell(6)
+				.setCellValue(excelFile.getWorklog());
+				System.out.println(excelFile.getWorklog());
+
+				row.createCell(7)
+				.setCellValue(excelFile.getFromString().toString().replaceAll(",", " -> "));
+				System.out.println(excelFile.getFromString());
+
+				row.createCell(8)
+				.setCellValue(excelFile.getCount());
+				System.out.println(excelFile.getCount());
+
+			}
+			// Resize all columns to fit the content size
+			for(int p = 0; p < columns.length; p++) {
+				sheet.autoSizeColumn(p);
+			}
+			// Write the output to a file
+			String path = "C:\\jcodes\\RND\\jira-dataintegrator\\";
+			FileOutputStream fileOut = null;
+			try {
+				fileOut = new FileOutputStream(path + dataBean.getProjectID()+"-"+"Log.xlsx");
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			try {
+				workbook.write(fileOut);
+				fileOut.close();
+				// Closing the workbook
+				workbook.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
+
 	}
 }
