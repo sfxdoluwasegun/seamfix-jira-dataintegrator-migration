@@ -20,7 +20,11 @@ public class QueryData {
 	private int projectID;
 	private int sprintID;
 	private int sprint;
-	private String name;
+	
+	private String startDate;
+	private String endDate;
+	private String projectName;
+	
 	private long members;
 	private double totalPoints;
 	private double completePoints;
@@ -55,6 +59,12 @@ public class QueryData {
 		}
 		return sWriter.toString();
 
+	}
+	
+	public void init(QueryData request, String projectName) {
+		this.projectName = projectName;
+		this.startDate = request.getStartDate();
+		this.endDate = request.getEndDate();
 	}
 
 }

@@ -5,7 +5,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.Collections;
@@ -50,9 +53,19 @@ public class Workbook {
 		String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(Charset.forName("ISO-8859-1")));
 		return "Basic " + encodedAuth;
 	}
+	
+	 // Method to encode a string value using `UTF-8` encoding scheme
+    private static String encodetarget(String value) {
+        try {
+            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+        } catch (UnsupportedEncodingException ex) {
+            throw new RuntimeException(ex.getCause());
+        }
+    }
 
 	public  String kanbanIssue() {
-		String target ="https://seamfix.atlassian.net/rest/api/2/search?jql=project =\"Admin Management\"&createdDate>=10022013&createdDate<=10022013";
+		String url ="https://seamfix.atlassian.net/rest/api/2/search?jql=";
+		String target =url+encodetarget("project = " + dataBean.getProjectName()+ " and created >="+dataBean.getStartDate()+" and created <= "+dataBean.getEndDate());
 		System.out.println(target);
 		Client client = null;
 		try {
@@ -215,14 +228,12 @@ public class Workbook {
 	}
 
 	public void getAllIssues() {
-
-		List<String> listOfFromString = new ArrayList<>();
-		List<String> listOfAuthors = new ArrayList<>();
-
+		
 		List<JsonObject> filteredValues = callLog();
 
 		for(int i =0; i < filteredValues.size(); i++) {
 			ExcelFile file = new ExcelFile();
+			List<String> listOfFromString = new ArrayList<>();
 			JsonObject issue = filteredValues.get(i);
 
 			String key = issue.getString("key");
@@ -232,8 +243,6 @@ public class Workbook {
 			String assignee = issue.getJsonObject("fields").getJsonObject("assignee").getString("displayName");
 			System.out.println(assignee);
 			file.setAssignee(assignee);
-			listOfAuthors.add(assignee);
-			System.out.println(listOfAuthors);
 
 			String jsonString = createJson(key);
 
