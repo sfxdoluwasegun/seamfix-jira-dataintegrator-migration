@@ -16,32 +16,35 @@ import lombok.Setter;
 @Setter
 @RequestScoped
 public class QueryData {
-	
+
 	private int projectID;
 	private int sprintID;
 	private int sprint;
-	
+	private int startAt;
+	private int maxResults;
+
 	private String startDate;
 	private String endDate;
 	private String projectName;
-	
+
+
 	private long members;
 	private double totalPoints;
 	private double completePoints;
-	
+
 
 	private ArrayList<Issues> issues = new ArrayList<>();
 	private ArrayList<Parent> parent = new ArrayList<>();
 	private ArrayList<ExcelFile> file = new ArrayList<>();
-	
+
 	private StringWriter sWriter = new StringWriter();
-	
+
 	public String getJSON() {
 		JsonObjectBuilder json = Json.createObjectBuilder()
 				.add("totalMember", getMembers())
 				.add("completePoints", getCompletePoints())
 				.add("totalPoints", getTotalPoints());
-		
+
 		JsonArrayBuilder issuesBuilder = Json.createArrayBuilder();
 		for(Issues issues : getIssues()) {
 			JsonObjectBuilder object = Json.createObjectBuilder()
@@ -60,11 +63,13 @@ public class QueryData {
 		return sWriter.toString();
 
 	}
-	
+
 	public void init(QueryData request, String projectName) {
 		this.projectName = projectName;
 		this.startDate = request.getStartDate();
 		this.endDate = request.getEndDate();
+		this.maxResults = request.getMaxResults();
+		this.startAt = request.getStartAt();
 	}
 
 }

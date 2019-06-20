@@ -65,7 +65,7 @@ public class Workbook {
 
 	public  String kanbanIssue() {
 		String url ="https://seamfix.atlassian.net/rest/api/2/search?jql=";
-		String target =url+encodetarget("project = " + dataBean.getProjectName()+ " and created >="+dataBean.getStartDate()+" and created <= "+dataBean.getEndDate());
+		String target =url+encodetarget("project = " + dataBean.getProjectName()+ " and created >="+dataBean.getStartDate()+" and created <= "+dataBean.getEndDate())+"&startAt="+dataBean.getStartAt()+"&maxResults="+dataBean.getMaxResults();
 		System.out.println(target);
 		Client client = null;
 		try {
