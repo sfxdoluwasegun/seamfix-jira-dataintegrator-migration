@@ -29,6 +29,32 @@ public class QueryData {
 	private ArrayList<Issues> issues = new ArrayList<>();
 	private ArrayList<Parent> parent = new ArrayList<>();
 	private ArrayList<ExcelFile> file = new ArrayList<>();
+	
+	private StringWriter sWriter = new StringWriter();
+	
+	public String getJSON() {
+		JsonObjectBuilder json = Json.createObjectBuilder()
+				.add("totalMember", getMembers())
+				.add("completePoints", getCompletePoints())
+				.add("totalPoints", getTotalPoints());
+		
+		JsonArrayBuilder issuesBuilder = Json.createArrayBuilder();
+		for(Issues issues : getIssues()) {
+			JsonObjectBuilder object = Json.createObjectBuilder()
+					.add("id",  issues.getId())
+					.add("key", issues.getKey())
+					.add("assignee", issues.getAssignee());
+			issuesBuilder.add(object);
+		}
 
+		json.add("issues", issuesBuilder);
+
+
+		try (JsonWriter writer = Json.createWriter(sWriter)) {
+			writer.write(json.build());
+		}
+		return sWriter.toString();
+
+	}
 
 }
