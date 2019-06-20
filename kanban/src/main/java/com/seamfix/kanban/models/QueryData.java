@@ -9,5 +9,6 @@ import lombok.Setter;
 @Setter
 @RequestScoped
 public class QueryData {
+	
 
 }
