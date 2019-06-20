@@ -20,7 +20,7 @@ public class QueryData {
 	private ArrayList<Issues> issues = new ArrayList<>();
 	private ArrayList<Parent> parent = new ArrayList<>();
 	private ArrayList<ExcelFile> file = new ArrayList<>();
-	
+
 	private int projectID;
 	private int sprintID;
 	private int sprint;
@@ -28,7 +28,7 @@ public class QueryData {
 	private long members;
 	private double totalPoints;
 	private double completePoints;
-	
+
 	private StringWriter sWriter = new StringWriter();
 
 	public String getJSON() {
@@ -36,20 +36,20 @@ public class QueryData {
 				.add("totalMember", getMembers())
 				.add("completePoints", getCompletePoints())
 				.add("totalPoints", getTotalPoints());
-		JsonArrayBuilder parentBuilder = Json.createArrayBuilder();
-		
+
+		JsonArrayBuilder storyBuilder = Json.createArrayBuilder();
 		for(Parent parent : getParent()) {
 			JsonObjectBuilder object = Json.createObjectBuilder()
 					.add("id",  parent.getId())
 					.add("key", parent.getKey())
-					.add("startDate", parent.getDateCreated())
 					.add("assignee", parent.getAssignee())
-					.add("endDate", parent.getDateModified())
+					.add("storyPoint", parent.getStoryPoint())
+					.add("worklog", parent.getWorklog())
 					.add("currentStatus", parent.getCurrentStatus())
-					.add("Worklog", parent.getWorklog())
-					.add("storyPoint", parent.getStoryPoint());
-			
-			parentBuilder.add(object);
+					.add("dateCreated", parent.getDateCreated())
+					.add("dateModified", parent.getDateModified());
+
+			storyBuilder.add(object);
 		}
 
 		JsonArrayBuilder issuesBuilder = Json.createArrayBuilder();
@@ -61,7 +61,7 @@ public class QueryData {
 			issuesBuilder.add(object);
 		}
 
-		json.add("parent", parentBuilder);
+		json.add("story", storyBuilder);
 		json.add("issues", issuesBuilder);
 
 
