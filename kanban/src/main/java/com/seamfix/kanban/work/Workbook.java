@@ -53,19 +53,19 @@ public class Workbook {
 		String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(Charset.forName("ISO-8859-1")));
 		return "Basic " + encodedAuth;
 	}
-	
-	 // Method to encode a string value using `UTF-8` encoding scheme
-    private static String encodetarget(String value) {
-        try {
-            return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
-        } catch (UnsupportedEncodingException ex) {
-            throw new RuntimeException(ex.getCause());
-        }
-    }
+
+	// Method to encode a string value using `UTF-8` encoding scheme
+	private static String encodetarget(String value) {
+		try {
+			return URLEncoder.encode(value, StandardCharsets.UTF_8.toString());
+		} catch (UnsupportedEncodingException ex) {
+			throw new RuntimeException(ex.getCause());
+		}
+	}
 
 	public  String kanbanIssue() {
 		String url ="https://seamfix.atlassian.net/rest/api/2/search?jql=";
-		if(dataBean.getStartAt() == 0 && dataBean.getMaxResults() == 0 ||  dataBean.getMaxResults() == 0) {
+		if(dataBean.getStartAt() == 0 && dataBean.getMaxResults() == 0 || dataBean.getMaxResults() == 0) {
 			dataBean.setStartAt(0);
 			dataBean.setMaxResults(100);
 		}
@@ -140,17 +140,27 @@ public class Workbook {
 	}
 
 	public void getParentKeys() {
+
+		JsonObject root = Json.createReader(new StringReader(kanbanIssue())).readObject();
+
 		List<JsonObject> filteredValues = callLog();
 
 		List<String> listOfAuthors = new ArrayList<>();
 		List<Double> listOfPoints = new ArrayList<>();
+		List<Double> totalIssues = new ArrayList<>();
 		List<Double> listOfIncomplete = new ArrayList<>();
+
+
+		int total = root.getInt("total");
+		dataBean.setTotal(total);
 
 		for(int i =0; i < filteredValues.size(); i++) {
 			Issues	issuesq  = new Issues();
 			JsonObject issue = filteredValues.get(i);
 
 			String id = issue.getString("id");
+			Double inISum = Double.parseDouble(id);
+			totalIssues.add(inISum);
 			issuesq.setId(id);
 
 			String key = issue.getString("key");
@@ -211,6 +221,9 @@ public class Workbook {
 		}
 		long totalMemebers = listOfAuthors.stream().distinct().count();	
 		dataBean.setMembers(totalMemebers);
+		
+		long totalI = totalIssues.stream().distinct().count();	
+		dataBean.setTotalIssue(totalI);
 
 		Double totalPoints = listOfPoints.stream().mapToDouble(Double::doubleValue).sum();
 		dataBean.setTotalPoints(totalPoints);
@@ -222,7 +235,7 @@ public class Workbook {
 	}
 
 	public void getAllIssues() {
-		
+
 		List<JsonObject> filteredValues = callLog();
 
 		for(int i =0; i < filteredValues.size(); i++) {
