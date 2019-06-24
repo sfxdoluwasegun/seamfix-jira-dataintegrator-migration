@@ -65,6 +65,10 @@ public class Workbook {
 
 	public  String kanbanIssue() {
 		String url ="https://seamfix.atlassian.net/rest/api/2/search?jql=";
+		if(dataBean.getStartAt() == 0 && dataBean.getMaxResults() == 0 ||  dataBean.getMaxResults() == 0) {
+			dataBean.setStartAt(0);
+			dataBean.setMaxResults(100);
+		}
 		String target =url+encodetarget("project = " + dataBean.getProjectName()+ " and created >="+dataBean.getStartDate()+" and created <= "+dataBean.getEndDate())+"&startAt="+dataBean.getStartAt()+"&maxResults="+dataBean.getMaxResults();
 		System.out.println(target);
 		Client client = null;
@@ -147,11 +151,9 @@ public class Workbook {
 			JsonObject issue = filteredValues.get(i);
 
 			String id = issue.getString("id");
-			System.out.println(id);
 			issuesq.setId(id);
 
 			String key = issue.getString("key");
-			System.out.println(key);
 			issuesq.setKey(key);
 
 			String assignee = issue.getJsonObject("fields").getJsonObject("assignee").getString("displayName");
@@ -167,15 +169,12 @@ public class Workbook {
 				Parent parent = new Parent();
 
 				String sid = issue.getString("id");
-				System.out.println(sid);
 				parent.setId(sid);
 
 				String skey = issue.getString("key");
-				System.out.println(skey);
 				parent.setKey(skey);
 
 				String PAssignee = issue.getJsonObject("fields").getJsonObject("assignee").getString("displayName");
-				System.out.println();
 				parent.setAssignee(PAssignee);
 
 				String jsonString = createJson(skey);
@@ -193,13 +192,11 @@ public class Workbook {
 				parent.setStoryPoint(storyPoint);
 
 				Double sum = Double.parseDouble(storyPoint);
-				System.out.println(sum);
 				listOfPoints.add(sum);
 
 				dataBean.getParent().add(parent);
 
 				if(!issue.getJsonObject("fields").containsKey("closedSprints")) {
-					System.out.println("no closed sprint");
 
 				}else {
 					JsonArray closedSprints = issue.getJsonObject("fields").getJsonArray("closedSprints");
@@ -213,16 +210,13 @@ public class Workbook {
 			}
 		}
 		long totalMemebers = listOfAuthors.stream().distinct().count();	
-		System.out.println(totalMemebers);
 		dataBean.setMembers(totalMemebers);
 
 		Double totalPoints = listOfPoints.stream().mapToDouble(Double::doubleValue).sum();
-		System.out.println(totalPoints);
 		dataBean.setTotalPoints(totalPoints);
 
 		Double points = listOfIncomplete.stream().mapToDouble(Double::doubleValue).sum();
 		Double incompletePoints = totalPoints - points;
-		System.out.println(incompletePoints );
 		dataBean.setCompletePoints(incompletePoints);
 
 	}
@@ -372,7 +366,7 @@ public class Workbook {
 			String path = "C:\\jcodes\\RND\\jira-dataintegrator\\";
 			FileOutputStream fileOut = null;
 			try {
-				fileOut = new FileOutputStream(path + dataBean.getProjectID()+"-"+"Log.xlsx");
+				fileOut = new FileOutputStream(path + dataBean.getProjectName() + "-"+ dataBean.getEndDate()+"-"+"Log.xlsx");
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}

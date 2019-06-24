@@ -129,7 +129,7 @@ public class Workbook {
 		
 		int k =0;
 		if(k == stories.size()) {
-			dataBean.setStoryPoint("-");
+			dataBean.setStoryPoint("0");
 		}else {
 			for(k = 0;k<stories.size(); k++) {
 				JsonObject storyAll = stories.get(k);
