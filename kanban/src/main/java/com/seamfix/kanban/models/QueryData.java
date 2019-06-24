@@ -46,7 +46,6 @@ public class QueryData {
 	public String getJSON() {
 		JsonObjectBuilder json = Json.createObjectBuilder()
 				.add("total", getTotal())
-				.add("totalIssue", getTotalIssue())
 				.add("totalMember", getMembers())
 				.add("completePoints", getCompletePoints())
 				.add("totalPoints", getTotalPoints());
