@@ -147,7 +147,6 @@ public class Workbook {
 
 		List<String> listOfAuthors = new ArrayList<>();
 		List<Double> listOfPoints = new ArrayList<>();
-		List<Double> totalIssues = new ArrayList<>();
 		List<Double> listOfIncomplete = new ArrayList<>();
 
 
@@ -159,8 +158,6 @@ public class Workbook {
 			JsonObject issue = filteredValues.get(i);
 
 			String id = issue.getString("id");
-			Double inISum = Double.parseDouble(id);
-			totalIssues.add(inISum);
 			issuesq.setId(id);
 
 			String key = issue.getString("key");
@@ -169,8 +166,6 @@ public class Workbook {
 			String assignee = issue.getJsonObject("fields").getJsonObject("assignee").getString("displayName");
 			System.out.println(assignee);
 			issuesq.setAssignee(assignee);
-			listOfAuthors.add(assignee);
-
 			dataBean.getIssues().add(issuesq);
 
 			JsonArray subtasks = issue.getJsonObject("fields").getJsonArray("subtasks");
@@ -222,9 +217,6 @@ public class Workbook {
 		long totalMemebers = listOfAuthors.stream().distinct().count();	
 		dataBean.setMembers(totalMemebers);
 		
-		long totalI = totalIssues.stream().distinct().count();	
-		dataBean.setTotalIssue(totalI);
-
 		Double totalPoints = listOfPoints.stream().mapToDouble(Double::doubleValue).sum();
 		dataBean.setTotalPoints(totalPoints);
 
