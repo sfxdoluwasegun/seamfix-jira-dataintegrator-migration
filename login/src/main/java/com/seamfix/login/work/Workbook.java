@@ -19,7 +19,7 @@ public class Workbook {
 
 		JsonObject json = Json.createObjectBuilder()
 				.add("email",dataBean.getEmail())
-				.add("password",dataBean.getPassword())
+				.add("token",dataBean.getToken())
 				.build();
 		StringWriter sWriter = new StringWriter();
 		try (JsonWriter writer = Json.createWriter(sWriter)) {
