@@ -75,9 +75,8 @@ public class QueryData {
 
 	}
 
-	public void init(QueryData request, int projectID) {
+	public void init(int projectID) {
 		this.projectID = projectID;
-		this.auth = request.auth;
 		
 	}
 

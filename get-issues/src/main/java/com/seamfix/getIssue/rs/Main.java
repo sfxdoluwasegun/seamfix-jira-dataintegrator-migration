@@ -1,7 +1,6 @@
 package com.seamfix.getIssue.rs;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -24,7 +23,7 @@ public class Main {
 
 	public Response call(@PathParam("taskID") String taskID) {
 	    dataBean.init(taskID);
-		workbook.getJSON();
+		workbook.getWorklog();
 
 		return Response.ok().entity(dataBean.rsJSON()).type("application/json").build();
 	}

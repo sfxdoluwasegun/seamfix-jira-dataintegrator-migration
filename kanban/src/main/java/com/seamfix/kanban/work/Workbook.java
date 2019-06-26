@@ -144,7 +144,6 @@ public class Workbook {
 		JsonObject root = Json.createReader(new StringReader(kanbanIssue())).readObject();
 
 		List<JsonObject> filteredValues = callLog();
-
 		List<String> listOfAuthors = new ArrayList<>();
 		List<Double> listOfPoints = new ArrayList<>();
 		List<Double> listOfIncomplete = new ArrayList<>();
@@ -216,7 +215,7 @@ public class Workbook {
 		}
 		long totalMemebers = listOfAuthors.stream().distinct().count();	
 		dataBean.setMembers(totalMemebers);
-		
+
 		Double totalPoints = listOfPoints.stream().mapToDouble(Double::doubleValue).sum();
 		dataBean.setTotalPoints(totalPoints);
 
@@ -297,93 +296,89 @@ public class Workbook {
 			}
 
 			dataBean.getFile().add(file);
+			
+			excelSheet();
 
-			//create blank workbook
-			XSSFWorkbook workbook = new XSSFWorkbook(); 
+		}
+	}
 
-			//Create a blank sheet
-			XSSFSheet sheet = workbook.createSheet("Sprint");
+	public void excelSheet() {
+		//create blank workbook
+		XSSFWorkbook workbook = new XSSFWorkbook(); 
 
-			// Create a Row
-			Row headerRow = sheet.createRow(0);
+		//Create a blank sheet
+		XSSFSheet sheet = workbook.createSheet("Sprint");
 
-			// Create cells
-			String[] columns = {"Key","Assignee","Start Date","End Date","Current Status","storyPoint","Worklog","Transition History","QA Review"};
+		// Create a Row
+		Row headerRow = sheet.createRow(0);
 
-			for(int n = 0; n < columns.length; n++) {
-				Cell cell = headerRow.createCell(n);
-				cell.setCellValue(columns[n]);
+		// Create cells
+		String[] columns = {"Key","Assignee","Start Date","End Date","Current Status","storyPoint","Worklog","Transition History","QA Review"};
 
-				//to enable newlines you need set a cell styles with wrap=true
-				CellStyle cs = workbook.createCellStyle();
-				cs.setWrapText(true);
-				cell.setCellStyle(cs);
-			}
+		for(int n = 0; n < columns.length; n++) {
+			Cell cell = headerRow.createCell(n);
+			cell.setCellValue(columns[n]);
 
-			// Create Other rows and cells with data
-			int rowNum = 1;
-			for(ExcelFile excelFile: dataBean.getFile()) {
-				Row row = sheet.createRow(rowNum++);
+			//to enable newlines you need set a cell styles with wrap=true
+			CellStyle cs = workbook.createCellStyle();
+			cs.setWrapText(true);
+			cell.setCellStyle(cs);
+		}
 
-				row.createCell(0)
-				.setCellValue(excelFile.getKey());
-				System.out.println(excelFile.getKey());
+		// Create Other rows and cells with data
+		int rowNum = 1;
+		for(ExcelFile excelFile: dataBean.getFile()) {
+			Row row = sheet.createRow(rowNum++);
 
-				row.createCell(1)
-				.setCellValue(excelFile.getAssignee());
-				System.out.println(excelFile.getAssignee());
+			row.createCell(0)
+			.setCellValue(excelFile.getKey());
 
-				row.createCell(2)
-				.setCellValue(excelFile.getDateCreated());
-				System.out.println(excelFile.getDateCreated());
+			row.createCell(1)
+			.setCellValue(excelFile.getAssignee());
 
-				row.createCell(3)
-				.setCellValue(excelFile.getDateModified());
-				System.out.println(excelFile.getDateModified());
+			row.createCell(2)
+			.setCellValue(excelFile.getDateCreated());
 
-				row.createCell(4)
-				.setCellValue(excelFile.getCurrentStatus());
-				System.out.println(excelFile.getCurrentStatus());
+			row.createCell(3)
+			.setCellValue(excelFile.getDateModified());
 
-				row.createCell(5)
-				.setCellValue(excelFile.getStoryPoint());
-				System.out.println(excelFile.getStoryPoint());
+			row.createCell(4)
+			.setCellValue(excelFile.getCurrentStatus());
 
+			row.createCell(5)
+			.setCellValue(excelFile.getStoryPoint());
 
-				row.createCell(6)
-				.setCellValue(excelFile.getWorklog());
-				System.out.println(excelFile.getWorklog());
+			row.createCell(6)
+			.setCellValue(excelFile.getWorklog());
 
-				row.createCell(7)
-				.setCellValue(excelFile.getFromString().toString().replaceAll(",", " -> "));
-				System.out.println(excelFile.getFromString());
+			row.createCell(7)
+			.setCellValue(excelFile.getFromString().toString().replaceAll(",", " -> "));
 
-				row.createCell(8)
-				.setCellValue(excelFile.getCount());
-				System.out.println(excelFile.getCount());
+			row.createCell(8)
+			.setCellValue(excelFile.getCount());
 
-			}
-			// Resize all columns to fit the content size
-			for(int p = 0; p < columns.length; p++) {
-				sheet.autoSizeColumn(p);
-			}
-			// Write the output to a file
-			String path = "C:\\jcodes\\RND\\jira-dataintegrator\\";
-			FileOutputStream fileOut = null;
-			try {
-				fileOut = new FileOutputStream(path + dataBean.getProjectName() + "-"+ dataBean.getEndDate()+"-"+"Log.xlsx");
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
-			try {
-				workbook.write(fileOut);
-				fileOut.close();
-				// Closing the workbook
-				workbook.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+		}
+		// Resize all columns to fit the content size
+		for(int p = 0; p < columns.length; p++) {
+			sheet.autoSizeColumn(p);
+		}
+		// Write the output to a file
+		String path = "C:\\jcodes\\RND\\jira-dataintegrator\\";
+		FileOutputStream fileOut = null;
+		try {
+			fileOut = new FileOutputStream(path + dataBean.getProjectName() + "-"+ dataBean.getEndDate()+"-"+"Log.xlsx");
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
+		try {
+			workbook.write(fileOut);
+			fileOut.close();
+			// Closing the workbook
+			workbook.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 
 	}
+
 }

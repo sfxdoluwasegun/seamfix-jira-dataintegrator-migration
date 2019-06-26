@@ -20,8 +20,8 @@ public class Main {
 	
 	@POST
 	@Path("/project/{projectID}")
-	public Response callProject(QueryData request, @PathParam("projectID") int projectID) {
-		 dataBean.init(request, projectID);
+	public Response callProject(@PathParam("projectID") int projectID) {
+		 dataBean.init(projectID);
 		workbook.getJSON();
 		
 		return Response.ok().entity(dataBean.JSON()).type("application/json").build();
@@ -29,8 +29,8 @@ public class Main {
 	
 	@POST
 	@Path("/sprint/{sprintID}")
-	public Response callSprint(QueryData request, @PathParam("sprintID") int sprintID) {
-		dataBean.initS(request, sprintID);
+	public Response callSprint(@PathParam("sprintID") int sprintID) {
+		dataBean.initS(sprintID);
 		workbook.sprint();
 		
 		return Response.ok().entity(dataBean.getSprintDetail()).type("application/json").build();

@@ -1,7 +1,7 @@
 package com.seamfix.projects.rs;
 
 import javax.inject.Inject;
-import javax.ws.rs.POST;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
@@ -18,11 +18,11 @@ public class Main {
 	@Inject
 	QueryData dataBean;
 
-	@POST
+	@GET
 	@Path(value = "{projectSize}")
 
-	public Response call(QueryData request, @PathParam("projectSize") int projectSize) {
-		dataBean.init(request, projectSize);
+	public Response call(@PathParam("projectSize") int projectSize) {
+		dataBean.init(projectSize);
 		workbook.getJSON();
 
 		return Response.ok().entity(dataBean.JSON()).type("application/json").build();

@@ -58,14 +58,12 @@ public class QueryData {
 		this.project.add(project);
 	}
 
-	public void init(QueryData request, int projectID) {
+	public void init(int projectID) {
 		this.projectID = projectID;
-		this.auth = request.auth;
 	}
 
-	public void initS(QueryData request, int sprintID) {
+	public void initS( int sprintID) {
 		this.sprintID = sprintID;
-		this.auth = request.auth;
 	}
 
 

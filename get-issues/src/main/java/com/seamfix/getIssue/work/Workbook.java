@@ -45,7 +45,7 @@ public class Workbook {
 		}
 	}
 	
-	public  void getJSON(){
+	public  void getWorklog(){
 		String key = dataBean.getTaskID();
 		JsonObject root = Json.createReader(new StringReader(getIssue(key))).readObject();
 
