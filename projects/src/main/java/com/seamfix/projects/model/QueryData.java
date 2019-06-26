@@ -13,6 +13,7 @@ import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonValue;
 import javax.json.JsonWriter;
+import javax.security.auth.message.callback.PrivateKeyCallback.Request;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +28,7 @@ public class QueryData {
 	private ArrayList<Kanban> kanban = new ArrayList<>();
 	
 	private int projectSize;
+	private String auth;
 
 	private StringWriter sWriter = new StringWriter(); 
 
@@ -77,8 +79,9 @@ public class QueryData {
 	}
 
 
-	public void init(int projectSize) {
+	public void init(QueryData request,int projectSize) {
 		this.projectSize = projectSize;
+		this.auth = request.auth;
 		
 	}
 }

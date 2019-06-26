@@ -1,9 +1,7 @@
 package com.seamfix.changelog.work;
 
 import java.io.StringReader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,8 +10,12 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.ServiceUnavailableException;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpHeaders;
@@ -27,14 +29,24 @@ public class Workbook {
 	QueryData dataBean;
 
 
-	private static String getAuthHeader() {
-		final String email = "mabikoye@seamfix.com";
-		final String token= "wXtzMKuBuOmzoRJJrNDtCF23";
-		String auth = email +":"+ token;
-		String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(Charset.forName("ISO-8859-1")));
-		return "Basic " + encodedAuth;
+	private JsonObject getAuthHeader() {
+		String target = "http://localhost:8091/login/authenticate";
+		String response = recieveResponse(target);
+		System.out.println(response);
+		return Json.createReader(new StringReader(response)).readObject();
 	}
 
+	public String recieveResponse(String target) throws BadRequestException, ServiceUnavailableException, WebApplicationException {
+		Client client = null;
+		try {
+			client = ClientBuilder.newClient();
+			return client.target(target.trim()).request()
+					.post(Entity.entity(null, MediaType.APPLICATION_JSON), String.class);
+		} finally {
+			if (client != null)
+				client.close();
+		}
+	}
 
 	public  String changeLogs(String key) {
 		String target ="https://seamfix.atlassian.net/rest/api/3/issue/" + key +"/changelog?";
@@ -51,32 +63,25 @@ public class Workbook {
 		}
 	}
 
-
-	public  void getJSON(){
+	
+	public JsonArray getStringResponse() {
 		String key = dataBean.getTaskID();
 		JsonObject root = Json.createReader(new StringReader(changeLogs(key))).readObject();
+		 return root.getJsonArray("values");
 
+	}
 
+	public void setValues() {
+		
+		JsonArray values = getStringResponse();
+		
 		List<String> listOfFromString = new ArrayList<>();
 		List<String> listOfToString = new ArrayList<>();
-
-		
-
-		JsonArray values = root.getJsonArray("values");
-
 		List<JsonObject> filteredValues = values
 				.stream()
 				.filter(value -> value.asJsonObject().getJsonArray("items").getJsonObject(0).getString("field").equals("status"))
 				.map(value -> value.asJsonObject())
 				.collect(Collectors.toList());
-		System.out.println(filteredValues.size());
-
-		List<JsonObject> stories = values
-				.stream()
-				.filter(story -> story.asJsonObject().getJsonArray("items").getJsonObject(0).getString("field").equals("Story Points"))
-				.map(story -> story.asJsonObject())
-				.collect(Collectors.toList());
-		
 
 		int i=0;
 		if(i == filteredValues.size()) {
@@ -125,7 +130,15 @@ public class Workbook {
 				dataBean.setCurrentStatus(currentStatus);
 				}
 			}
-		}
+		}	
+	}
+	public void getStories(){
+		JsonArray values = getStringResponse();
+		List<JsonObject> stories = values
+				.stream()
+				.filter(story -> story.asJsonObject().getJsonArray("items").getJsonObject(0).getString("field").equals("Story Points"))
+				.map(story -> story.asJsonObject())
+				.collect(Collectors.toList());
 		
 		int k =0;
 		if(k == stories.size()) {
@@ -136,9 +149,13 @@ public class Workbook {
 
 				String storyPoint = storyAll.getJsonArray("items").getJsonObject(0).getString("toString");
 				dataBean.setStoryPoint(storyPoint);
-				
 			}
 		}
+	}
+	
+	public void getJSON() {
+		setValues();
+		getStories();
 	}
 }
 

@@ -12,6 +12,8 @@ import javax.json.JsonWriter;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.http.HttpHeaders;
 
@@ -35,20 +37,17 @@ public class Workbook {
 		return sWriter.toString();
 	}
 
-	private  String getAuthHeader() {
+	public  String getAuthHeader() {
 		String email = dataBean.getEmail().trim();
 		String token= dataBean.getToken().trim();
 		System.out.println(token);
 		String auth = email +":"+ token;
 		String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(Charset.forName("ISO-8859-1")));
 		String finalAuth = "Basic " + encodedAuth;
-		dataBean.setAuth(finalAuth);
 		return finalAuth;
 	}
 
-
-
-	public  String check() {
+	public  Response check() {
 		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board/";
 		Client client = null;
 		try {
@@ -56,10 +55,26 @@ public class Workbook {
 			return client.target(target.trim())
 					.request(MediaType.APPLICATION_JSON)
 					.header(HttpHeaders.AUTHORIZATION, getAuthHeader())
-					.get(String.class);
+					.get(Response.class);
 		} finally {
 			if (client != null)
 				client.close();
 		}
+	}
+	
+	public void getRespone() {
+		int code = check().getStatus();
+		if(code == 401 ) {
+			prepareErrorMessage(Status.UNAUTHORIZED, "Login", "email or token is wrong");
+			return;
+		} else {
+			dataBean.setAuth(getAuthHeader());
+		}
+	}
+	
+	private void prepareErrorMessage(Status status, String error, String message) {
+		dataBean.setStatus(status);
+		dataBean.setError(error);
+		dataBean.setMessage(message);
 	}
 }
