@@ -24,7 +24,10 @@ public class QueryData {
 	private int projectID;
 	private int sprintID;
 	private int sprint;
+	
 	private String name;
+	private String auth;
+	
 	private long members;
 	private double totalPoints;
 	private double completePoints;
@@ -72,9 +75,10 @@ public class QueryData {
 
 	}
 
-	public void init(int projectID) {
-
+	public void init(QueryData request, int projectID) {
 		this.projectID = projectID;
+		this.auth = request.auth;
+		
 	}
 
 

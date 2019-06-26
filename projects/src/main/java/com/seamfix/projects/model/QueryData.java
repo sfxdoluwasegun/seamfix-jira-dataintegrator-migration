@@ -2,18 +2,12 @@ package com.seamfix.projects.model;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.json.Json;
-import javax.json.JsonArray;
 import javax.json.JsonArrayBuilder;
-import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
-import javax.json.JsonValue;
 import javax.json.JsonWriter;
-import javax.security.auth.message.callback.PrivateKeyCallback.Request;
 
 import lombok.Getter;
 import lombok.Setter;

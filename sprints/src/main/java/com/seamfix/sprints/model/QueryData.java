@@ -4,13 +4,11 @@ import java.io.StringWriter;
 import java.util.ArrayList;
 
 import javax.enterprise.context.RequestScoped;
-import javax.faces.application.ProjectStage;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriter;
-
 
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +24,7 @@ public class QueryData {
 
 	private String startDate;
 	private String endDate;
+	private String auth;
 
 	private int projectID;
 	private int sprintID;
@@ -59,14 +58,14 @@ public class QueryData {
 		this.project.add(project);
 	}
 
-	public void init(int projectID) {
+	public void init(QueryData request, int projectID) {
 		this.projectID = projectID;
-
+		this.auth = request.auth;
 	}
 
-	public void initS(int sprintID) {
+	public void initS(QueryData request, int sprintID) {
 		this.sprintID = sprintID;
-
+		this.auth = request.auth;
 	}
 
 

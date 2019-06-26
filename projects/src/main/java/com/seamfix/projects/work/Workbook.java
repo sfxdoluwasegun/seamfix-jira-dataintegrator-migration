@@ -1,10 +1,6 @@
 package com.seamfix.projects.work;
 
 import java.io.StringReader;
-import java.lang.reflect.Array;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 

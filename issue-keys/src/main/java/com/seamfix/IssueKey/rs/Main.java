@@ -20,8 +20,8 @@ public class Main {
 	
 	@GET
 	@Path("/{projectID}")
-	public Response call(@PathParam("projectID") int projectID) {
-		 dataBean.init( projectID);
+	public Response call(QueryData request, @PathParam("projectID") int projectID) {
+		 dataBean.init( request, projectID);
 		 workbook.getParentKeys();
 		
 		return Response.ok().entity(dataBean.getJSON()).type("application/json").build();
@@ -29,8 +29,8 @@ public class Main {
 	
 	@GET
 	@Path("/file/{projectID}")
-	public void callFile(@PathParam("projectID") int projectID) {
-		 dataBean.init( projectID);
+	public void callFile(QueryData request, @PathParam("projectID") int projectID) {
+		 dataBean.init(request, projectID);
 		 workbook.getAllIssues();
 		
 	}
