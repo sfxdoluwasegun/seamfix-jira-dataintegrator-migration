@@ -26,6 +26,7 @@ public class QueryData {
 	private String startDate;
 	private String endDate;
 	private String projectName;
+	private String auth;
 
 
 	private long members;

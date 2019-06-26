@@ -4,8 +4,6 @@ package com.seamfix.IssueKey.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.enterprise.context.RequestScoped;
-
 import lombok.Getter;
 import lombok.Setter;
 

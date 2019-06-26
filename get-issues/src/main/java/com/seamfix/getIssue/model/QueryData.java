@@ -18,6 +18,7 @@ public class QueryData {
 	
 	private String taskID;
 	private String worklog;
+	private String auth;
 	
 	private StringWriter sWriter = new StringWriter(); 
 	

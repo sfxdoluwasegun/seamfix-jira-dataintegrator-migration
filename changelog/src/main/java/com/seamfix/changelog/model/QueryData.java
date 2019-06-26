@@ -9,6 +9,7 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriter;
+import javax.security.auth.message.callback.PrivateKeyCallback.Request;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,6 +26,7 @@ public class QueryData {
 	private String dateModified;
 	private String reporter;
 	private String currentStatus;
+	private String auth;
 	
 	private List<String> toString;
 	private List<String> fromString;
@@ -64,7 +66,7 @@ public class QueryData {
 		return sWriter.toString();
 	}
 	
-	public void init(String taskID) {
+	public void init(QueryData request, String taskID) {
 		this.taskID = taskID;
 	}
 }

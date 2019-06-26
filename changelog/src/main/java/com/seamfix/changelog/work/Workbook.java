@@ -118,9 +118,6 @@ public class Workbook {
 				
 				System.out.println(listOfToString);
 				dataBean.setToString(listOfToString);
-				
-				
-				
 			    
 				if(listOfToString.size() == 1) {
 					String currentStatus = listOfToString.get(0);
