@@ -45,7 +45,6 @@ public class Workbook {
 
 	public  String sprintIssue() {
 		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board/"+dataBean.getProjectID()+"/issue?maxResults=100";
-		System.out.println(target);
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
@@ -75,6 +74,7 @@ public class Workbook {
 		try {
 			client = ClientBuilder.newClient();
 			return client.target(target.trim()).request()
+					.header(HttpHeaders.AUTHORIZATION, dataBean.getAuth())
 					.post(Entity.entity(jsonRequest, MediaType.APPLICATION_JSON), String.class);
 		} finally {
 			if (client != null)
@@ -93,23 +93,21 @@ public class Workbook {
 		String response = recieveResponse(target,key, json);
 		return Json.createReader(new StringReader(response)).readObject();
 	}
-	
+
 	public List<JsonObject> callLog() {
 
 		JsonObject root = Json.createReader(new StringReader(sprintIssue())).readObject();
-
 		JsonArray issues = root.getJsonArray("issues");
-
 
 		List<JsonObject> filteredValues = issues
 				.stream()
 				.filter(issue -> issue.asJsonObject().getString("expand").equals("operations,versionedRepresentations,editmeta,changelog,renderedFields"))
 				.map(issue -> issue.asJsonObject())
 				.collect(Collectors.toList());
-
+		System.out.println(filteredValues.size());
 		return filteredValues;
 	}
-	
+
 	public void getParentKeys() {
 		List<JsonObject> filteredValues = callLog();
 
@@ -130,7 +128,6 @@ public class Workbook {
 			issuesq.setAssignee(assignee);
 			listOfAuthors.add(assignee);
 
-
 			dataBean.getIssues().add(issuesq);
 
 			JsonArray subtasks = issue.getJsonObject("fields").getJsonArray("subtasks");
@@ -145,6 +142,7 @@ public class Workbook {
 				parent.setKey(skey);
 
 				String PAssignee = issue.getJsonObject("fields").getJsonObject("assignee").getString("displayName");
+				listOfAuthors.add(PAssignee);
 				parent.setAssignee(PAssignee);
 
 				String jsonString = createJson(skey);
@@ -154,7 +152,7 @@ public class Workbook {
 				JsonObject logObject = postLog(skey, jsonString);
 
 				if(logObject == null) {
-
+					return;
 				}
 
 				String worklog = logObject.getString("Worklog");
@@ -164,7 +162,7 @@ public class Workbook {
 				if(jsonObject == null) {
 					return;
 				}
-
+                   
 				String startDate = jsonObject.getJsonObject("issues").getString("startDate");
 				parent.setDateCreated(startDate);
 
@@ -184,7 +182,7 @@ public class Workbook {
 
 				if(!issue.getJsonObject("fields").containsKey("closedSprints")) {
 					System.out.println("no closed sprint");
-					
+
 				}else {
 					JsonArray closedSprints = issue.getJsonObject("fields").getJsonArray("closedSprints");
 					int sprint = closedSprints.getJsonObject(closedSprints.size() - 1).getInt("id");
@@ -208,6 +206,7 @@ public class Workbook {
 		dataBean.setCompletePoints(incompletePoints);
 
 	}
+
 
 	public void getAllIssues() {
 		List<JsonObject> filteredValues = callLog();
@@ -253,23 +252,22 @@ public class Workbook {
 
 			String storyPoint = json.getString("storyPoint");
 			file.setStoryPoint(storyPoint);
-			
-			
+
+
 			JsonArray hFromString = json.getJsonObject("flow").getJsonArray("fromString");
 			for(int j =0; j< hFromString.size(); j++) {
 				String fromString = hFromString.getString(j);
 				listOfFromString.add(fromString);
 			}
 			file.setFromString(listOfFromString);
-             
+
 			listOfFromString.add(currentStatus);
 			if(!listOfFromString.contains("In QA Review")) {
 				file.setCount("No QA Review");
 			} else {
-			int number = Collections.frequency(listOfFromString, "In QA Review");
-			System.out.println(Collections.frequency(listOfFromString, "In QA Review"));
-			String count = String.valueOf(number);
-            file.setCount(count);
+				int number = Collections.frequency(listOfFromString, "In QA Review");
+				String count = String.valueOf(number);
+				file.setCount(count);
 			}
 
 			dataBean.getFile().add(file);
@@ -303,39 +301,30 @@ public class Workbook {
 
 				row.createCell(0)
 				.setCellValue(excelFile.getKey());
-				System.out.println(excelFile.getKey());
 
 				row.createCell(1)
 				.setCellValue(excelFile.getAssignee());
-				System.out.println(excelFile.getAssignee());
 
 				row.createCell(2)
 				.setCellValue(excelFile.getDateCreated());
-				System.out.println(excelFile.getDateCreated());
 
 				row.createCell(3)
 				.setCellValue(excelFile.getDateModified());
-				System.out.println(excelFile.getDateModified());
 
 				row.createCell(4)
 				.setCellValue(excelFile.getCurrentStatus());
-				System.out.println(excelFile.getCurrentStatus());
 
 				row.createCell(5)
 				.setCellValue(excelFile.getStoryPoint());
-				System.out.println(excelFile.getStoryPoint());
 
 				row.createCell(6)
 				.setCellValue(excelFile.getWorklog());
-				System.out.println(excelFile.getWorklog());
 
 				row.createCell(7)
 				.setCellValue(excelFile.getFromString().toString().replaceAll(",", " -> "));
-				System.out.println(excelFile.getFromString());
-				
+
 				row.createCell(8)
 				.setCellValue(excelFile.getCount());
-				System.out.println(excelFile.getCount());
 
 			}
 			// Resize all columns to fit the content size
@@ -360,7 +349,6 @@ public class Workbook {
 			}
 		}
 	}
+
 }
-
-
 

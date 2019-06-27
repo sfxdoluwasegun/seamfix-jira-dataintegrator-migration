@@ -92,7 +92,6 @@ public class Workbook {
 			project.setProjectName(projectName);			
 			kanban.setProjectName(projectName);
 
-			System.out.println(project);
 			dataBean.getProjects().add(project);
 			dataBean.getKanban().add(kanban);
 

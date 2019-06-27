@@ -7,10 +7,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,14 +44,6 @@ public class Workbook {
 	@Inject
 	QueryData dataBean;
 
-	private static String getAuthHeader() {
-		final String email = "mabikoye@seamfix.com";
-		final String token= "wXtzMKuBuOmzoRJJrNDtCF23";
-		String auth = email +":"+ token;
-		String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(Charset.forName("ISO-8859-1")));
-		return "Basic " + encodedAuth;
-	}
-
 	// Method to encode a string value using `UTF-8` encoding scheme
 	private static String encodetarget(String value) {
 		try {
@@ -69,14 +59,13 @@ public class Workbook {
 			dataBean.setStartAt(0);
 			dataBean.setMaxResults(100);
 		}
-		String target =url+encodetarget("project = " + dataBean.getProjectName()+ " and created >="+dataBean.getStartDate()+" and created <= "+dataBean.getEndDate())+"&startAt="+dataBean.getStartAt()+"&maxResults="+dataBean.getMaxResults();
-		System.out.println(target);
+		String target =url+encodetarget("project = " + dataBean.getProjectName()+ " and created >= "+dataBean.getStartDate()+" and created <= "+dataBean.getEndDate())+"&startAt="+dataBean.getStartAt()+"&maxResults="+dataBean.getMaxResults();
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
 			return client.target(target.trim())
 					.request(MediaType.APPLICATION_JSON)
-					.header(HttpHeaders.AUTHORIZATION, getAuthHeader())
+					.header(HttpHeaders.AUTHORIZATION, dataBean.getAuth())
 					.get(String.class);
 		} finally {
 			if (client != null)
@@ -85,7 +74,6 @@ public class Workbook {
 	}
 
 	public String createJson(String key) {
-
 		JsonObject json = Json.createObjectBuilder()
 				.add("key",key)
 				.build();
@@ -100,7 +88,9 @@ public class Workbook {
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
-			return client.target(target.trim()).request()
+			return client.target(target.trim())
+					.request()
+					.header(HttpHeaders.AUTHORIZATION, dataBean.getAuth())
 					.post(Entity.entity(jsonRequest, MediaType.APPLICATION_JSON), String.class);
 		} finally {
 			if (client != null)
@@ -124,18 +114,17 @@ public class Workbook {
 	}
 
 	public List<JsonObject> callLog() {
-
 		JsonObject root = Json.createReader(new StringReader(kanbanIssue())).readObject();
 
 		JsonArray issues = root.getJsonArray("issues");
-
+System.out.println("issues");
 
 		List<JsonObject> filteredValues = issues
 				.stream()
-				.filter(issue -> issue.asJsonObject().getString("expand").equals("operations,versionedRepresentations,editmeta,changelog,customfield_11919.properties,renderedFields"))
+				.filter(issue -> issue.asJsonObject().getString("expand").equals("operations,versionedRepresentations,editmeta,changelog,renderedFields"))
 				.map(issue -> issue.asJsonObject())
 				.collect(Collectors.toList());
-		System.out.println(filteredValues.size());
+		System.out.println(filteredValues);
 		return filteredValues;
 	}
 
@@ -163,7 +152,7 @@ public class Workbook {
 			issuesq.setKey(key);
 
 			String assignee = issue.getJsonObject("fields").getJsonObject("assignee").getString("displayName");
-			System.out.println(assignee);
+			listOfAuthors.add(assignee);
 			issuesq.setAssignee(assignee);
 			dataBean.getIssues().add(issuesq);
 
@@ -235,11 +224,9 @@ public class Workbook {
 			JsonObject issue = filteredValues.get(i);
 
 			String key = issue.getString("key");
-			System.out.println(key);
 			file.setKey(key);
 
 			String assignee = issue.getJsonObject("fields").getJsonObject("assignee").getString("displayName");
-			System.out.println(assignee);
 			file.setAssignee(assignee);
 
 			String jsonString = createJson(key);
@@ -253,7 +240,6 @@ public class Workbook {
 			}
 
 			String worklog = logObject.getString("Worklog");
-			System.out.println(worklog);
 			file.setWorklog(worklog);
 
 			if(jsonObject == null) {
@@ -262,14 +248,12 @@ public class Workbook {
 			JsonObject json = jsonObject.getJsonObject("issues");
 
 			String startDate = json.getString("startDate");
-			System.out.println(startDate);
 			file.setDateCreated(startDate);
 
 			String endDate = json.getString("endDate");
 			file.setDateModified(endDate);
 
 			String currentStatus = json.getString("currentStatus");
-			System.out.println(currentStatus);
 			file.setCurrentStatus(currentStatus);
 
 			String storyPoint = json.getString("storyPoint");
@@ -280,7 +264,6 @@ public class Workbook {
 			for(int j =0; j< hFromString.size(); j++) {
 				String fromString = hFromString.getString(j);
 				listOfFromString.add(fromString);
-				System.out.println(listOfFromString);
 			}
 			file.setFromString(listOfFromString);
 
@@ -289,96 +272,89 @@ public class Workbook {
 				file.setCount("No QA Review");
 			} else {
 				int number = Collections.frequency(listOfFromString, "In QA Review");
-				System.out.println(Collections.frequency(listOfFromString, "In QA Review"));
 				String count = String.valueOf(number);
-				System.out.println(count);
 				file.setCount(count);
 			}
 
 			dataBean.getFile().add(file);
 			
-			excelSheet();
+			XSSFWorkbook workbook = new XSSFWorkbook(); 
+
+			//Create a blank sheet
+			XSSFSheet sheet = workbook.createSheet("Sprint");
+
+			// Create a Row
+			Row headerRow = sheet.createRow(0);
+
+			// Create cells
+			String[] columns = {"Key","Assignee","Start Date","End Date","Current Status","storyPoint","Worklog","Transition History","QA Review"};
+
+			for(int n = 0; n < columns.length; n++) {
+				Cell cell = headerRow.createCell(n);
+				cell.setCellValue(columns[n]);
+
+				//to enable newlines you need set a cell styles with wrap=true
+				CellStyle cs = workbook.createCellStyle();
+				cs.setWrapText(true);
+				cell.setCellStyle(cs);
+			}
+
+			// Create Other rows and cells with data
+			int rowNum = 1;
+			for(ExcelFile excelFile: dataBean.getFile()) {
+				Row row = sheet.createRow(rowNum++);
+
+				row.createCell(0)
+				.setCellValue(excelFile.getKey());
+
+				row.createCell(1)
+				.setCellValue(excelFile.getAssignee());
+
+				row.createCell(2)
+				.setCellValue(excelFile.getDateCreated());
+
+				row.createCell(3)
+				.setCellValue(excelFile.getDateModified());
+
+				row.createCell(4)
+				.setCellValue(excelFile.getCurrentStatus());
+
+				row.createCell(5)
+				.setCellValue(excelFile.getStoryPoint());
+
+				row.createCell(6)
+				.setCellValue(excelFile.getWorklog());
+
+				row.createCell(7)
+				.setCellValue(excelFile.getFromString().toString().replaceAll(",", " -> "));
+
+				row.createCell(8)
+				.setCellValue(excelFile.getCount());
+
+			}
+			// Resize all columns to fit the content size
+			for(int p = 0; p < columns.length; p++) {
+				sheet.autoSizeColumn(p);
+			}
+			// Write the output to a file
+			String path = "C:\\jcodes\\RND\\jira-dataintegrator\\";
+			FileOutputStream fileOut = null;
+			try {
+				fileOut = new FileOutputStream(path + dataBean.getProjectName() + "-"+ dataBean.getEndDate()+"-"+"Log.xlsx");
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+			try {
+				workbook.write(fileOut);
+				fileOut.close();
+				// Closing the workbook
+				workbook.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
 
 		}
-	}
-
-	public void excelSheet() {
-		//create blank workbook
-		XSSFWorkbook workbook = new XSSFWorkbook(); 
-
-		//Create a blank sheet
-		XSSFSheet sheet = workbook.createSheet("Sprint");
-
-		// Create a Row
-		Row headerRow = sheet.createRow(0);
-
-		// Create cells
-		String[] columns = {"Key","Assignee","Start Date","End Date","Current Status","storyPoint","Worklog","Transition History","QA Review"};
-
-		for(int n = 0; n < columns.length; n++) {
-			Cell cell = headerRow.createCell(n);
-			cell.setCellValue(columns[n]);
-
-			//to enable newlines you need set a cell styles with wrap=true
-			CellStyle cs = workbook.createCellStyle();
-			cs.setWrapText(true);
-			cell.setCellStyle(cs);
-		}
-
-		// Create Other rows and cells with data
-		int rowNum = 1;
-		for(ExcelFile excelFile: dataBean.getFile()) {
-			Row row = sheet.createRow(rowNum++);
-
-			row.createCell(0)
-			.setCellValue(excelFile.getKey());
-
-			row.createCell(1)
-			.setCellValue(excelFile.getAssignee());
-
-			row.createCell(2)
-			.setCellValue(excelFile.getDateCreated());
-
-			row.createCell(3)
-			.setCellValue(excelFile.getDateModified());
-
-			row.createCell(4)
-			.setCellValue(excelFile.getCurrentStatus());
-
-			row.createCell(5)
-			.setCellValue(excelFile.getStoryPoint());
-
-			row.createCell(6)
-			.setCellValue(excelFile.getWorklog());
-
-			row.createCell(7)
-			.setCellValue(excelFile.getFromString().toString().replaceAll(",", " -> "));
-
-			row.createCell(8)
-			.setCellValue(excelFile.getCount());
-
-		}
-		// Resize all columns to fit the content size
-		for(int p = 0; p < columns.length; p++) {
-			sheet.autoSizeColumn(p);
-		}
-		// Write the output to a file
-		String path = "C:\\jcodes\\RND\\jira-dataintegrator\\";
-		FileOutputStream fileOut = null;
-		try {
-			fileOut = new FileOutputStream(path + dataBean.getProjectName() + "-"+ dataBean.getEndDate()+"-"+"Log.xlsx");
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		}
-		try {
-			workbook.write(fileOut);
-			fileOut.close();
-			// Closing the workbook
-			workbook.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
 	}
 
 }

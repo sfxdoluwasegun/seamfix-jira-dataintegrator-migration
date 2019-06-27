@@ -1,6 +1,7 @@
 package com.seamfix.sprints.rs;
 
 import javax.inject.Inject;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -18,7 +19,7 @@ public class Main {
 	@Inject
 	QueryData dataBean;
 	
-	@POST
+	@GET
 	@Path("/project/{projectID}")
 	public Response callProject(@PathParam("projectID") int projectID) {
 		 dataBean.init(projectID);
@@ -27,7 +28,7 @@ public class Main {
 		return Response.ok().entity(dataBean.JSON()).type("application/json").build();
 	}
 	
-	@POST
+	@GET
 	@Path("/sprint/{sprintID}")
 	public Response callSprint(@PathParam("sprintID") int sprintID) {
 		dataBean.initS(sprintID);

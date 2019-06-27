@@ -10,12 +10,8 @@ import javax.inject.Inject;
 import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.ServiceUnavailableException;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.http.HttpHeaders;
@@ -28,26 +24,6 @@ public class Workbook {
 	@Inject
 	QueryData dataBean;
 
-
-	private JsonObject getAuthHeader() {
-		String target = "http://localhost:8091/login/authenticate";
-		String response = recieveResponse(target);
-		System.out.println(response);
-		return Json.createReader(new StringReader(response)).readObject();
-	}
-
-	public String recieveResponse(String target) throws BadRequestException, ServiceUnavailableException, WebApplicationException {
-		Client client = null;
-		try {
-			client = ClientBuilder.newClient();
-			return client.target(target.trim()).request()
-					.post(Entity.entity(null, MediaType.APPLICATION_JSON), String.class);
-		} finally {
-			if (client != null)
-				client.close();
-		}
-	}
-
 	public  String changeLogs(String key) {
 		String target ="https://seamfix.atlassian.net/rest/api/3/issue/" + key +"/changelog?";
 		Client client = null;
@@ -55,7 +31,7 @@ public class Workbook {
 			client = ClientBuilder.newClient();
 			return client.target(target.trim())
 					.request(MediaType.APPLICATION_JSON)
-					.header(HttpHeaders.AUTHORIZATION, getAuthHeader())
+					.header(HttpHeaders.AUTHORIZATION, dataBean.getAuth())
 					.get(String.class);
 		} finally {
 			if (client != null)
@@ -111,7 +87,6 @@ public class Workbook {
 				String fromString = value.getJsonArray("items").getJsonObject(0).getString("fromString");
 				listOfFromString.add(j,fromString);
 				dataBean.setFromString(listOfFromString);
-				System.out.println(listOfFromString);
 
 				String toString = value.getJsonArray("items").getJsonObject(0).getString("toString");
 				listOfToString.add(j,toString);

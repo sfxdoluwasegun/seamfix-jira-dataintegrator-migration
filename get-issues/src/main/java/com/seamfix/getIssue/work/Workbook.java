@@ -1,7 +1,6 @@
 package com.seamfix.getIssue.work;
 
 import java.io.StringReader;
-import java.util.Base64;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -21,14 +20,6 @@ public class Workbook {
 	@Inject
 	QueryData dataBean;
 
-	private String getAuthHeader() {
-		String email = "mabikoye@seamfix.com";
-		String token= "wXtzMKuBuOmzoRJJrNDtCF23";
-		String auth = email +":"+ token;
-		String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
-		return "Basic " + encodedAuth;
-	}
-
 	public  String getIssue(String key) {
 		String target = "https://seamfix.atlassian.net/rest/api/3/issue/" + key;
 		Client client = null;
@@ -36,7 +27,7 @@ public class Workbook {
 			client = ClientBuilder.newClient();
 			return client.target(target.trim())
 					.request(MediaType.APPLICATION_JSON)
-					.header(HttpHeaders.AUTHORIZATION, getAuthHeader())
+					.header(HttpHeaders.AUTHORIZATION, dataBean.getAuth())
 					.get(String.class);
 		} finally {
 			if (client != null)

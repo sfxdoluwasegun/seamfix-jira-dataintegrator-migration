@@ -1,7 +1,6 @@
 package com.seamfix.changelog.model;
 
 import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
@@ -9,7 +8,6 @@ import javax.json.Json;
 import javax.json.JsonArrayBuilder;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriter;
-import javax.security.auth.message.callback.PrivateKeyCallback.Request;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -66,7 +64,7 @@ public class QueryData {
 		return sWriter.toString();
 	}
 	
-	public void init(QueryData request, String taskID) {
+	public void init(String taskID) {
 		this.taskID = taskID;
 	}
 }

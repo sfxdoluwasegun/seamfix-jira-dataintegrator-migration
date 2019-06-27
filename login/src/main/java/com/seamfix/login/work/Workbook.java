@@ -40,7 +40,6 @@ public class Workbook {
 	public  String getAuthHeader() {
 		String email = dataBean.getEmail().trim();
 		String token= dataBean.getToken().trim();
-		System.out.println(token);
 		String auth = email +":"+ token;
 		String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(Charset.forName("ISO-8859-1")));
 		String finalAuth = "Basic " + encodedAuth;

@@ -20,9 +20,9 @@ public class Main {
 	
 	@POST
 	@Path(value="{taskID}")
-	public Response call(QueryData request, @PathParam("taskID") String taskID){
+	public Response call(@PathParam("taskID") String taskID){
 		
-	    dataBean.init(request, taskID);
+	    dataBean.init(taskID);
 		workbook.getJSON();
 
 		return Response.ok().entity(dataBean.rsJSON()).type("application/json").build();
