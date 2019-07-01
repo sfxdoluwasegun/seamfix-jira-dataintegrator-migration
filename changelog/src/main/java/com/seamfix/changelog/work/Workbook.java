@@ -37,18 +37,18 @@ public class Workbook {
 		}
 	}
 
-	
+
 	public JsonArray getStringResponse() {
 		String key = dataBean.getTaskID();
 		JsonObject root = Json.createReader(new StringReader(changeLogs(key))).readObject();
-		 return root.getJsonArray("values");
+		return root.getJsonArray("values");
 
 	}
 
 	public void setValues() {
-		
+
 		JsonArray values = getStringResponse();
-		
+
 		List<String> listOfFromString = new ArrayList<>();
 		List<String> listOfToString = new ArrayList<>();
 		List<JsonObject> filteredValues = values
@@ -62,7 +62,7 @@ public class Workbook {
 			dataBean.setDateCreated("No Time Moved");
 			dataBean.setDateModified("No Time Moved");
 			dataBean.setCurrentStatus("Closed");
-			
+
 			String fromString ="Open";
 			listOfFromString.add(fromString);
 			dataBean.setFromString(listOfFromString);
@@ -77,27 +77,24 @@ public class Workbook {
 
 				String modifiedTime = filteredValues.get(filteredValues.size() - 1).getString("created");
 				dataBean.setDateModified(modifiedTime);
-				
 
 				JsonObject value = filteredValues.get(j);
 
-               
 				String fromString = value.getJsonArray("items").getJsonObject(0).getString("fromString");
 				listOfFromString.add(j,fromString);
 				dataBean.setFromString(listOfFromString);
 
 				String toString = value.getJsonArray("items").getJsonObject(0).getString("toString");
 				listOfToString.add(j,toString);
-				
-				System.out.println(listOfToString);
+
 				dataBean.setToString(listOfToString);
-			    
+
 				if(listOfToString.size() == 1) {
 					String currentStatus = listOfToString.get(0);
 					dataBean.setCurrentStatus(currentStatus);
 				}else {
-				String currentStatus = listOfToString.get(listOfToString.size() - 1);
-				dataBean.setCurrentStatus(currentStatus);
+					String currentStatus = listOfToString.get(listOfToString.size() - 1);
+					dataBean.setCurrentStatus(currentStatus);
 				}
 			}
 		}	
@@ -109,7 +106,7 @@ public class Workbook {
 				.filter(story -> story.asJsonObject().getJsonArray("items").getJsonObject(0).getString("field").equals("Story Points"))
 				.map(story -> story.asJsonObject())
 				.collect(Collectors.toList());
-		
+
 		int k =0;
 		if(k == stories.size()) {
 			dataBean.setStoryPoint("0");
@@ -122,7 +119,7 @@ public class Workbook {
 			}
 		}
 	}
-	
+
 	public void getJSON() {
 		setValues();
 		getStories();
