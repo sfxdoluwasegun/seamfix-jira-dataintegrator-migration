@@ -43,7 +43,7 @@ import com.seamfix.kanban.props.PropertiesManager;
 public class Workbook {
 	@Inject
 	QueryData dataBean;
-	
+
 	@Inject
 	PropertiesManager propertiesManager;
 
@@ -59,10 +59,10 @@ public class Workbook {
 	public  String kanbanIssue() {
 		String url ="https://seamfix.atlassian.net/rest/api/2/search?jql=";
 		if(dataBean.getMaxResults() == 0) {
-			dataBean.setStartAt(0);
 			dataBean.setMaxResults(100);
 		}
 		String target =url+encodetarget("project = " + dataBean.getProjectName()+ " and created >= "+dataBean.getStartDate()+" and created <= "+dataBean.getEndDate())+"&startAt="+dataBean.getStartAt()+"&maxResults="+dataBean.getMaxResults();
+		System.out.println(target);
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
@@ -278,7 +278,7 @@ public class Workbook {
 			}
 
 			dataBean.getFile().add(file);
-			
+
 			XSSFWorkbook workbook = new XSSFWorkbook(); 
 
 			//Create a blank sheet
@@ -338,7 +338,7 @@ public class Workbook {
 				sheet.autoSizeColumn(p);
 			}
 			// Write the output to a file
-			String sourcePath= "C:\\jcodes\\RND\\jira-dataintegrator\\";
+			String sourcePath= propertiesManager.getProperty("kanbanExcelFile","C:\\jcodes\\RND\\jira-dataintegrator\\");
 			FileOutputStream fileOut = null;
 			try {
 				fileOut = new FileOutputStream(sourcePath + dataBean.getProjectName() + "-"+ dataBean.getEndDate()+"-"+"Log.xlsx");
