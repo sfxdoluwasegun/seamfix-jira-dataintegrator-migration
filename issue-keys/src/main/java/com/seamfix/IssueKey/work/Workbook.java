@@ -34,6 +34,7 @@ import com.seamfix.IssueKey.model.ExcelFile;
 import com.seamfix.IssueKey.model.Issues;
 import com.seamfix.IssueKey.model.Parent;
 import com.seamfix.IssueKey.model.QueryData;
+import com.seamfix.IssueKey.props.PropertiesManager;
 
 
 @Dependent
@@ -41,6 +42,9 @@ public class Workbook {
 
 	@Inject
 	QueryData dataBean;
+	
+	@Inject
+	PropertiesManager propertiesManager;
 
 	public  String sprintIssue() {
 		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board/"+dataBean.getProjectID()+"/issue?maxResults=100";
@@ -82,13 +86,15 @@ public class Workbook {
 	}
 
 	private JsonObject postService(String key, String json) {
-		String target = "http://localhost:8088/changelog/"+key;
+		String changelog= propertiesManager.getProperty("changelogPath", "http://localhost:8088/changelog/");
+		String target = changelog+key;
 		String response = recieveResponse(target,key, json);
 		return Json.createReader(new StringReader(response)).readObject();
 	}
 
 	private JsonObject postLog(String key, String json) {
-		String target ="http://localhost:8087/getIssue/"+ key;
+		String getIssue=propertiesManager.getProperty("getIssuePath", "http://localhost:8087/getIssue/");
+		String target = getIssue+ key;
 		String response = recieveResponse(target,key, json);
 		return Json.createReader(new StringReader(response)).readObject();
 	}
@@ -179,7 +185,7 @@ public class Workbook {
 				dataBean.getParent().add(parent);
 
 				if(!issue.getJsonObject("fields").containsKey("closedSprints")) {
-					return;
+					
 				}else {
 					JsonArray closedSprints = issue.getJsonObject("fields").getJsonArray("closedSprints");
 					int sprint = closedSprints.getJsonObject(closedSprints.size() - 1).getInt("id");
@@ -329,10 +335,10 @@ public class Workbook {
 				sheet.autoSizeColumn(p);
 			}
 			// Write the output to a file
-			String path = "C:\\jcodes\\RND\\jira-dataintegrator\\";
+			String sourceDirPath=propertiesManager.getProperty("scrumExcelFile", "C:\\jcodes\\RND\\jira-dataintegrator\\");
 			FileOutputStream fileOut = null;
 			try {
-				fileOut = new FileOutputStream(path + dataBean.getProjectID()+"-"+"Log.xlsx");
+				fileOut = new FileOutputStream(sourceDirPath + dataBean.getProjectID()+"-"+"Log.xlsx");
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}

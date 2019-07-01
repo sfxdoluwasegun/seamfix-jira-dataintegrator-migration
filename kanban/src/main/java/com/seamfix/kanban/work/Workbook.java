@@ -37,11 +37,15 @@ import com.seamfix.kanban.models.ExcelFile;
 import com.seamfix.kanban.models.Issues;
 import com.seamfix.kanban.models.Parent;
 import com.seamfix.kanban.models.QueryData;
+import com.seamfix.kanban.props.PropertiesManager;
 
 @Dependent
 public class Workbook {
 	@Inject
 	QueryData dataBean;
+	
+	@Inject
+	PropertiesManager propertiesManager;
 
 	// Method to encode a string value using `UTF-8` encoding scheme
 	private static String encodetarget(String value) {
@@ -99,13 +103,15 @@ public class Workbook {
 
 
 	private JsonObject postService(String key, String json) {
-		String target = "http://localhost:8088/changelog/"+key;
+		String changelog= propertiesManager.getProperty("changelogPath", "http://localhost:8088/changelog/");
+		String target = changelog+key;
 		String response = recieveResponse(target,key, json);
 		return Json.createReader(new StringReader(response)).readObject();
 	}
 
 	private JsonObject postLog(String key, String json) {
-		String target ="http://localhost:8087/getIssue/"+ key;
+		String getIssue= propertiesManager.getProperty("getIssuePath", "http://localhost:8087/getIssue/");
+		String target = getIssue+ key;
 		String response = recieveResponse(target,key, json);
 		return Json.createReader(new StringReader(response)).readObject();
 	}
@@ -332,10 +338,10 @@ public class Workbook {
 				sheet.autoSizeColumn(p);
 			}
 			// Write the output to a file
-			String path = "C:\\jcodes\\RND\\jira-dataintegrator\\";
+			String sourcePath= "C:\\jcodes\\RND\\jira-dataintegrator\\";
 			FileOutputStream fileOut = null;
 			try {
-				fileOut = new FileOutputStream(path + dataBean.getProjectName() + "-"+ dataBean.getEndDate()+"-"+"Log.xlsx");
+				fileOut = new FileOutputStream(sourcePath + dataBean.getProjectName() + "-"+ dataBean.getEndDate()+"-"+"Log.xlsx");
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
