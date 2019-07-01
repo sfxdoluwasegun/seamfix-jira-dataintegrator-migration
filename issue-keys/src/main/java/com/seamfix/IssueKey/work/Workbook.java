@@ -161,7 +161,6 @@ public class Workbook {
 
 				String worklog = logObject.getString("Worklog");
 				parent.setWorklog(worklog);
-				System.out.println(worklog);
 
 				if(jsonObject == null) {
 					return;
@@ -184,9 +183,8 @@ public class Workbook {
 
 				dataBean.getParent().add(parent);
 
-				if(!issue.getJsonObject("fields").containsKey("closedSprints")) {
+				if(issue.getJsonObject("fields").containsKey("closedSprints")) {
 					
-				}else {
 					JsonArray closedSprints = issue.getJsonObject("fields").getJsonArray("closedSprints");
 					int sprint = closedSprints.getJsonObject(closedSprints.size() - 1).getInt("id");
 					if(dataBean.getSprintID() != sprint) {
@@ -200,14 +198,12 @@ public class Workbook {
 		long totalMemebers = listOfAuthors.stream().distinct().count();	
 		dataBean.setMembers(totalMemebers);
 
-
 		Double totalPoints = listOfPoints.stream().mapToDouble(Double::doubleValue).sum();
 		dataBean.setTotalPoints(totalPoints);
 
 		Double points = listOfIncomplete.stream().mapToDouble(Double::doubleValue).sum();
 		Double incompletePoints = totalPoints - points;
 		dataBean.setCompletePoints(incompletePoints);
-
 	}
 
 
