@@ -14,8 +14,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.http.HttpHeaders;
-
 import com.seamfix.changelog.model.QueryData;
 
 @Dependent
@@ -31,7 +29,7 @@ public class Workbook {
 			client = ClientBuilder.newClient();
 			return client.target(target.trim())
 					.request(MediaType.APPLICATION_JSON)
-					.header(HttpHeaders.AUTHORIZATION, dataBean.getAuth())
+					.header("Authorization", dataBean.getAuth())
 					.get(String.class);
 		} finally {
 			if (client != null)

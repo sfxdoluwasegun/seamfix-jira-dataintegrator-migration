@@ -24,7 +24,6 @@ import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.http.HttpHeaders;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -50,7 +49,7 @@ public class Workbook {
 			client = ClientBuilder.newClient();
 			return client.target(target.trim())
 					.request(MediaType.APPLICATION_JSON)
-					.header(HttpHeaders.AUTHORIZATION, dataBean.getAuth())
+					.header("Authorization", dataBean.getAuth())
 					.get(String.class);
 		} finally {
 			if (client != null)
@@ -74,7 +73,7 @@ public class Workbook {
 		try {
 			client = ClientBuilder.newClient();
 			return client.target(target.trim()).request()
-					.header(HttpHeaders.AUTHORIZATION, dataBean.getAuth())
+					.header("Authorization", dataBean.getAuth())
 					.post(Entity.entity(jsonRequest, MediaType.APPLICATION_JSON), String.class);
 		} finally {
 			if (client != null)

@@ -11,8 +11,6 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
 
-import org.apache.http.HttpHeaders;
-
 import com.seamfix.sprints.model.Project;
 import com.seamfix.sprints.model.QueryData;
 
@@ -22,7 +20,11 @@ public class Workbook {
 
 	@Inject
 	QueryData dataBean;
-
+	
+	/**This method calls the project JIRA API
+	 * 
+	 * @return JSON string response
+	 */
 	public  String sprints() {
 		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board/" + dataBean.getProjectID() +"/sprint/";
 		Client client = null;
@@ -30,7 +32,7 @@ public class Workbook {
 			client = ClientBuilder.newClient();
 			return client.target(target.trim())
 					.request(MediaType.APPLICATION_JSON)
-					.header(HttpHeaders.AUTHORIZATION,  dataBean.getAuth())
+					.header("Authorization",dataBean.getAuth())
 					.get(String.class);
 		} finally {
 			if (client != null)
@@ -38,6 +40,10 @@ public class Workbook {
 		}
 	}
 	
+	/**This method calls the sprint JIRA API
+	 * 
+	 * @return JSON string response
+	 */
 	public String sprintDetail() {
 		String target ="https://seamfix.atlassian.net/rest/agile/1.0/sprint/" + dataBean.getSprintID();
 		Client client = null;
@@ -45,7 +51,7 @@ public class Workbook {
 			client = ClientBuilder.newClient();
 			return client.target(target.trim())
 					.request(MediaType.APPLICATION_JSON)
-					.header(HttpHeaders.AUTHORIZATION, dataBean.getAuth())
+					.header("Authorization", dataBean.getAuth())
 					.get(String.class);
 		} finally {
 			if (client != null)
@@ -54,6 +60,10 @@ public class Workbook {
 	
 	}
 
+	/** 
+	 * This method is used to read the sprints JSON response,
+	 * to get the required values from the JSON response
+	 */
 	public void getJSON() {
 		JsonObject root = Json.createReader(new StringReader(sprints())).readObject();
 
@@ -81,6 +91,10 @@ public class Workbook {
 		}
 	}
 	
+	/** 
+	 * This method is used to read the sprintDetails JSON response,
+	 * to get the required values from the JSON response
+	 */
 	public void sprint() {
 		JsonObject root = Json.createReader(new StringReader(sprintDetail())).readObject();
 		

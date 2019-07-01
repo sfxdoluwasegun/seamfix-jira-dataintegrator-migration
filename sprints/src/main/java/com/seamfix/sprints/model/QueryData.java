@@ -30,7 +30,10 @@ public class QueryData {
 	private int sprintID;
 
 	private StringWriter sWriter = new StringWriter(); 
-
+	/**
+	 * This method generates the JSON response.
+	 * @return JSON response of projectID,name,start date and end date.
+	 */
 	public String JSON() {
 		JsonObjectBuilder json = Json.createObjectBuilder();
 
@@ -46,7 +49,6 @@ public class QueryData {
 
 		json.add("sprints", sprintBuilder);
 
-
 		try (JsonWriter writer = Json.createWriter(sWriter)) {
 			writer.write(json.build());
 		}
@@ -54,19 +56,10 @@ public class QueryData {
 
 	}
 
-	public void addProject(Project project) {
-		this.project.add(project);
-	}
-
-	public void init(int projectID) {
-		this.projectID = projectID;
-	}
-
-	public void initS( int sprintID) {
-		this.sprintID = sprintID;
-	}
-
-
+/**
+ * This method generates the JSON response.
+ * @return JSON response of sprintID,start date and end date.
+ */
 	public String getSprintDetail() {
 		JsonObject json = Json.createObjectBuilder()
 				.add("sprintId", getSprintID())
@@ -80,4 +73,17 @@ public class QueryData {
 		return sWriter.toString();
 
 	}
+	
+	public void addProject(Project project) {
+		this.project.add(project);
+	}
+
+	public void init(int projectID) {
+		this.projectID = projectID;
+	}
+
+	public void initS( int sprintID) {
+		this.sprintID = sprintID;
+	}
+
 }

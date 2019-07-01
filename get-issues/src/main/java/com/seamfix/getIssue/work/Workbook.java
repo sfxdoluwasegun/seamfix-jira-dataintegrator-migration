@@ -8,7 +8,6 @@ import javax.json.Json;
 import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
 
 import com.seamfix.getIssue.model.QueryData;
@@ -27,7 +26,7 @@ public class Workbook {
 			client = ClientBuilder.newClient();
 			return client.target(target.trim())
 					.request(MediaType.APPLICATION_JSON)
-					.header(HttpHeaders.AUTHORIZATION, dataBean.getAuth())
+					.header("Authorization", dataBean.getAuth())
 					.get(String.class);
 		} finally {
 			if (client != null)
