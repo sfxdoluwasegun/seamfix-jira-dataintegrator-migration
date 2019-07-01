@@ -166,11 +166,9 @@
 	<modules>
 		<module>get-issues</module>
 		<module>changelog</module>
-		<module>sprint</module>
 		<module>projects</module>
 		<module>sprints</module>
 		<module>issue-keys</module>
-		<module>excel-file</module>
 		<module>login</module>
 		<module>kanban</module>
 	</modules>
