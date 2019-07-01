@@ -103,7 +103,6 @@ public class Workbook {
 				.filter(issue -> issue.asJsonObject().getString("expand").equals("operations,versionedRepresentations,editmeta,changelog,renderedFields"))
 				.map(issue -> issue.asJsonObject())
 				.collect(Collectors.toList());
-		System.out.println(filteredValues.size());
 		return filteredValues;
 	}
 
@@ -161,7 +160,7 @@ public class Workbook {
 				if(jsonObject == null) {
 					return;
 				}
-                   
+
 				String startDate = jsonObject.getJsonObject("issues").getString("startDate");
 				parent.setDateCreated(startDate);
 
@@ -180,8 +179,7 @@ public class Workbook {
 				dataBean.getParent().add(parent);
 
 				if(!issue.getJsonObject("fields").containsKey("closedSprints")) {
-					System.out.println("no closed sprint");
-
+					return;
 				}else {
 					JsonArray closedSprints = issue.getJsonObject("fields").getJsonArray("closedSprints");
 					int sprint = closedSprints.getJsonObject(closedSprints.size() - 1).getInt("id");
