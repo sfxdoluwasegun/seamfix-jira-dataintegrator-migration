@@ -58,7 +58,7 @@ public class Workbook {
 
 	public  String kanbanIssue() {
 		String url ="https://seamfix.atlassian.net/rest/api/2/search?jql=";
-		if( dataBean.getMaxResults() == 0) {
+		if(dataBean.getMaxResults() == 0) {
 			dataBean.setStartAt(0);
 			dataBean.setMaxResults(100);
 		}
@@ -104,14 +104,14 @@ public class Workbook {
 
 	private JsonObject postService(String key, String json) {
 		String changelog= propertiesManager.getProperty("changelogPath", "http://localhost:8088/changelog/");
-		String target = "http://localhost:8088/changelog/"+key;
+		String target = changelog+key;
 		String response = recieveResponse(target,key, json);
 		return Json.createReader(new StringReader(response)).readObject();
 	}
 
 	private JsonObject postLog(String key, String json) {
 		String getIssue= propertiesManager.getProperty("getIssuePath", "http://localhost:8087/getIssue/");
-		String target = "http://localhost:8087/getIssue/"+ key;
+		String target = getIssue+ key;
 		String response = recieveResponse(target,key, json);
 		return Json.createReader(new StringReader(response)).readObject();
 	}
@@ -341,7 +341,7 @@ public class Workbook {
 			String sourcePath= "C:\\jcodes\\RND\\jira-dataintegrator\\";
 			FileOutputStream fileOut = null;
 			try {
-				fileOut = new FileOutputStream("C:\\jcodes\\RND\\jira-dataintegrator\\" + dataBean.getProjectName() + "-"+ dataBean.getEndDate()+"-"+"Log.xlsx");
+				fileOut = new FileOutputStream(sourcePath + dataBean.getProjectName() + "-"+ dataBean.getEndDate()+"-"+"Log.xlsx");
 			} catch (FileNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -353,6 +353,8 @@ public class Workbook {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+
+
 		}
 	}
 
