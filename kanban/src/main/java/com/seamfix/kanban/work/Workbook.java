@@ -67,7 +67,6 @@ public class Workbook {
 			dataBean.setMaxResults(100);
 		}
 		String target =url+encodetarget("project = " + dataBean.getProjectName()+ " and created >= "+dataBean.getStartDate()+" and created <= "+dataBean.getEndDate())+"&startAt="+dataBean.getStartAt()+"&maxResults="+dataBean.getMaxResults();
-		System.out.println(target);
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
