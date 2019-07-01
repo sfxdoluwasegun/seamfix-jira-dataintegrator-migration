@@ -11,6 +11,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
@@ -46,6 +48,9 @@ public class Workbook {
 
 	@Inject
 	PropertiesManager propertiesManager;
+	
+	@Inject
+	Logger logger;
 
 	// Method to encode a string value using `UTF-8` encoding scheme
 	private static String encodetarget(String value) {
@@ -190,9 +195,8 @@ public class Workbook {
 
 				dataBean.getParent().add(parent);
 
-				if(!issue.getJsonObject("fields").containsKey("closedSprints")) {
+				if(issue.getJsonObject("fields").containsKey("closedSprints")) {
 
-				}else {
 					JsonArray closedSprints = issue.getJsonObject("fields").getJsonArray("closedSprints");
 					int sprint = closedSprints.getJsonObject(closedSprints.size() - 1).getInt("id");
 					if(dataBean.getSprintID() != sprint) {
@@ -343,7 +347,7 @@ public class Workbook {
 			try {
 				fileOut = new FileOutputStream(sourcePath + dataBean.getProjectName() + "-"+ dataBean.getEndDate()+"-"+"Log.xlsx");
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				logger.log(Level.WARNING, "File Not Found");
 			}
 			try {
 				workbook.write(fileOut);
@@ -351,7 +355,7 @@ public class Workbook {
 				// Closing the workbook
 				workbook.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.log(Level.WARNING,"IOException");
 			}
 
 
