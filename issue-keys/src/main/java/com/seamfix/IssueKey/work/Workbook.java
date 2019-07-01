@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -42,9 +44,12 @@ public class Workbook {
 
 	@Inject
 	QueryData dataBean;
-	
+
 	@Inject
 	PropertiesManager propertiesManager;
+	
+	@Inject
+	Logger logger;
 
 	public  String sprintIssue() {
 		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board/"+dataBean.getProjectID()+"/issue?maxResults=100";
@@ -184,7 +189,7 @@ public class Workbook {
 				dataBean.getParent().add(parent);
 
 				if(issue.getJsonObject("fields").containsKey("closedSprints")) {
-					
+
 					JsonArray closedSprints = issue.getJsonObject("fields").getJsonArray("closedSprints");
 					int sprint = closedSprints.getJsonObject(closedSprints.size() - 1).getInt("id");
 					if(dataBean.getSprintID() != sprint) {
@@ -229,7 +234,7 @@ public class Workbook {
 			JsonObject logObject = postLog(key, jsonString);
 
 			if(logObject == null) {
-
+				return;
 			}
 
 			String worklog = logObject.getString("Worklog");
@@ -336,7 +341,7 @@ public class Workbook {
 			try {
 				fileOut = new FileOutputStream(sourceDirPath + dataBean.getProjectID()+"-"+"Log.xlsx");
 			} catch (FileNotFoundException e) {
-				e.printStackTrace();
+				logger.log(Level.WARNING, "File Not Found");
 			}
 			try {
 				workbook.write(fileOut);
@@ -344,7 +349,7 @@ public class Workbook {
 				// Closing the workbook
 				workbook.close();
 			} catch (IOException e) {
-				e.printStackTrace();
+				logger.log(Level.WARNING, "IOException error");
 			}
 		}
 	}
