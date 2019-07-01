@@ -151,16 +151,6 @@
 				<type>pom</type>
 			</dependency>
 			<dependency>
-				<groupId>com.nimbusds</groupId>
-				<artifactId>nimbus-jose-jwt</artifactId>
-				<version>${version.nimbus-jwt}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.bouncycastle</groupId>
-				<artifactId>bcpkix-jdk15on</artifactId>
-				<version>${version.bouncycastle}</version>
-			</dependency>
-			<dependency>
 				<groupId>org.jboss.arquillian.graphene</groupId>
 				<artifactId>graphene-webdriver</artifactId>
 				<version>2.1.0.Alpha2</version>
