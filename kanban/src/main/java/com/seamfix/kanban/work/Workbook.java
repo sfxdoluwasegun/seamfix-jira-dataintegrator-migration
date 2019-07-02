@@ -48,7 +48,7 @@ public class Workbook {
 
 	@Inject
 	PropertiesManager propertiesManager;
-	
+
 	@Inject
 	Logger logger;
 
@@ -240,7 +240,7 @@ public class Workbook {
 			JsonObject logObject = postLog(key, jsonString);
 
 			if(logObject == null) {
-
+				return;
 			}
 
 			String worklog = logObject.getString("Worklog");
