@@ -3,12 +3,12 @@ package com.seamfix.changelog.filter;
 import java.io.IOException;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
 
-import org.apache.http.HttpHeaders;
-
+import com.google.common.base.Strings;
 import com.seamfix.changelog.model.QueryData;
 
 @Provider
@@ -20,9 +20,12 @@ public class AuthFilter implements ContainerRequestFilter {
 
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
-		String auth = requestContext.getHeaderString(HttpHeaders.AUTHORIZATION);
-		dataBean.setAuth(auth);
+		String auth = requestContext.getHeaderString("authorization");
+		if(Strings.isNullOrEmpty(auth)) {
+			throw new NotAuthorizedException("No Authorization");
+		}
 		
+		dataBean.setAuth(auth);
 	}
 
 }

@@ -3,14 +3,17 @@ package com.seamfix.IssueKey.filter;
 import java.io.IOException;
 
 import javax.inject.Inject;
+import javax.ws.rs.NotAuthorizedException;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
 
+import com.google.common.base.Strings;
 import com.seamfix.IssueKey.model.QueryData;
 
 @Provider
 public class AuthFilter implements ContainerRequestFilter {
+	
 	
 	@Inject
 	QueryData dataBean;
@@ -18,8 +21,11 @@ public class AuthFilter implements ContainerRequestFilter {
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
 		String auth = requestContext.getHeaderString("authorization");
-		dataBean.setAuth(auth);
+		if(Strings.isNullOrEmpty(auth)) {
+			throw new NotAuthorizedException("No Authorization");
+		}
 		
+		dataBean.setAuth(auth);
 	}
 
 }
