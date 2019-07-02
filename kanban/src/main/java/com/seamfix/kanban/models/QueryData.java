@@ -6,8 +6,10 @@ import java.util.ArrayList;
 import javax.enterprise.context.RequestScoped;
 import javax.json.Json;
 import javax.json.JsonArrayBuilder;
+import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriter;
+import javax.ws.rs.core.Response.Status;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -27,6 +29,8 @@ public class QueryData {
 	private String endDate;
 	private String projectName;
 	private String auth;
+	private String error;
+	private String message;
 
 
 	private long members;
@@ -42,6 +46,25 @@ public class QueryData {
 
 	private StringWriter sWriter = new StringWriter();
 
+	private Status status = Status.OK;
+	
+	/** This method produces the jsonObject error messages
+	 * 
+	 * @return jsonObject that contains the error and error message
+	 */
+
+	public String toJsonErr() {
+		JsonObject json = Json.createObjectBuilder()
+				.add("error", getError())
+				.add("message", getMessage())
+				.build();
+
+		try (JsonWriter writer = Json.createWriter(getSWriter())) {
+			writer.write(json);
+		}
+		return getSWriter().toString();
+	}
+	
 	public String getJSON() {
 		JsonObjectBuilder json = Json.createObjectBuilder()
 				.add("total", getTotal())

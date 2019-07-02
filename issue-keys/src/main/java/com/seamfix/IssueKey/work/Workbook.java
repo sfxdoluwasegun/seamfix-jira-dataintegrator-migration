@@ -25,6 +25,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -94,6 +95,10 @@ public class Workbook {
 		String changelog= propertiesManager.getProperty("changelogPath", "http://localhost:8088/changelog/");
 		String target = changelog+key;
 		String response = recieveResponse(target,key, json);
+		if(response == null) {
+			prepareErrorMessage(Status.EXPECTATION_FAILED, "Changelog Error", "Error getting the changelog. Please retry");
+			return null;
+		}
 		return Json.createReader(new StringReader(response)).readObject();
 	}
 
@@ -101,6 +106,10 @@ public class Workbook {
 		String getIssue=propertiesManager.getProperty("getIssuePath", "http://localhost:8087/getIssue/");
 		String target = getIssue+ key;
 		String response = recieveResponse(target,key, json);
+		if(response == null) {
+			prepareErrorMessage(Status.EXPECTATION_FAILED, "Worklog Error", "Error getting the worklog. Please retry");
+			return null;
+		}
 		return Json.createReader(new StringReader(response)).readObject();
 	}
 
@@ -161,16 +170,16 @@ public class Workbook {
 				JsonObject logObject = postLog(skey, jsonString);
 
 				if(logObject == null) {
+					prepareErrorMessage(Status.EXPECTATION_FAILED, "Worklog Error", "Error getting the worklog. Please retry");
 					return;
 				}
-
 				String worklog = logObject.getString("Worklog");
 				parent.setWorklog(worklog);
 
 				if(jsonObject == null) {
+					prepareErrorMessage(Status.EXPECTATION_FAILED, "Changelog Error", "Error getting the changelog. Please retry");
 					return;
 				}
-
 				String startDate = jsonObject.getJsonObject("issues").getString("startDate");
 				parent.setDateCreated(startDate);
 
@@ -215,7 +224,6 @@ public class Workbook {
 	public void getAllIssues() {
 		List<JsonObject> filteredValues = callLog();
 
-
 		for(int i = 0; i < filteredValues.size(); i++) {
 			ExcelFile file = new ExcelFile();
 			List<String> listOfFromString = new ArrayList<>();
@@ -234,15 +242,19 @@ public class Workbook {
 			JsonObject logObject = postLog(key, jsonString);
 
 			if(logObject == null) {
+				prepareErrorMessage(Status.EXPECTATION_FAILED, "Worklog Error", "Error getting the worklog. Please retry");
 				return;
 			}
+
 
 			String worklog = logObject.getString("Worklog");
 			file.setWorklog(worklog);
 
 			if(jsonObject == null) {
+				prepareErrorMessage(Status.EXPECTATION_FAILED, "Changelog Error", "Error getting the changelog. Please retry");
 				return;
 			}
+			
 			JsonObject json = jsonObject.getJsonObject("issues");
 
 			String startDate = json.getString("startDate");
@@ -352,6 +364,12 @@ public class Workbook {
 				logger.log(Level.WARNING, "IOException error");
 			}
 		}
+	}
+	
+	private void prepareErrorMessage(Status status, String error, String message) {
+		dataBean.setStatus(status);
+		dataBean.setError(error);
+		dataBean.setMessage(message);
 	}
 
 }

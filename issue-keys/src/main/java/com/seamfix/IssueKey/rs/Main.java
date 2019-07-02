@@ -5,6 +5,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.seamfix.IssueKey.model.QueryData;
 import com.seamfix.IssueKey.work.Workbook;
@@ -24,14 +25,22 @@ public class Main {
 		 dataBean.init( projectID);
 		 workbook.getParentKeys();
 		
+			if (dataBean.getStatus().getFamily() != Status.Family.SUCCESSFUL) 
+				return Response.status(dataBean.getStatus()).entity(dataBean.toJsonErr()).type("application/json").build();  
+			
 		return Response.ok().entity(dataBean.getJSON()).type("application/json").build();
 	}
 	
 	@GET
 	@Path("/file/{projectID}")
-	public void callFile (@PathParam("projectID") int projectID) {
+	public Response callFile (@PathParam("projectID") int projectID) {
 		 dataBean.init( projectID);
 		 workbook.getAllIssues();
+		 
+			if (dataBean.getStatus().getFamily() != Status.Family.SUCCESSFUL) 
+				return Response.status(dataBean.getStatus()).entity(dataBean.toJsonErr()).type("application/json").build();  
+			
+			return null;
 		
 	}
 }
