@@ -47,7 +47,7 @@ public class Workbook {
 
 	@Inject
 	PropertiesManager propertiesManager;
-	
+
 	@Inject
 	Logger logger;
 
