@@ -74,7 +74,12 @@ public class Workbook {
 				.filter(kandan -> kandan.asJsonObject().getString("type").equals("kanban"))
 				.map(kandan -> kandan.asJsonObject())
 				.collect(Collectors.toList());	
-
+		
+		if (kanbans == null) {
+			prepareErrorMessage(Status.NOT_FOUND, "Kanbans Error", "This isn't kanban");
+			return ;
+		}
+		
 		for(int i=  0; i < kanbans.size(); i++) {
 
 			Project project = new Project();
@@ -109,6 +114,11 @@ public class Workbook {
 				.filter(scrum -> scrum.asJsonObject().getString("type").equals("scrum"))
 				.map(scrum -> scrum.asJsonObject())
 				.collect(Collectors.toList());
+		
+		if (scrums == null) {
+			prepareErrorMessage(Status.NOT_FOUND, "Scrums Error", "This isn't scrum");
+			return ;
+		}
 
 		for(int j=  0; j < scrums.size(); j++) {
 
