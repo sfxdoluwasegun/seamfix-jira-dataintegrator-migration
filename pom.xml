@@ -35,11 +35,6 @@
 					<groupId>io.thorntail</groupId>
 					<artifactId>thorntail-maven-plugin</artifactId>
 					<version>${version.thorntail}</version>
-					<configuration>
-						<jvmArguments>
-							<jvmArgument>-Xmx256m</jvmArgument>
-						</jvmArguments>
-					</configuration>
 					<executions>
 						<execution>
 							<id>package</id>
