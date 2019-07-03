@@ -19,11 +19,24 @@ public class QueryData {
 	private String taskID;
 	private String worklog;
 	private String auth;
+	private String error;
+	private String message;
 	
 	private StringWriter sWriter = new StringWriter(); 
 	
 	private Status status = Status.OK;
 
+	public String toJsonErr() {
+		JsonObject json = Json.createObjectBuilder()
+				.add("error", getError())
+				.add("message", getMessage())
+				.build();
+
+		try (JsonWriter writer = Json.createWriter(getSWriter())) {
+			writer.write(json);
+		}
+		return getSWriter().toString();
+	}
 	public String rsJSON() {
 		JsonObject json = (JsonObject) Json.createObjectBuilder()
 				.add("Task ID", getTaskID())

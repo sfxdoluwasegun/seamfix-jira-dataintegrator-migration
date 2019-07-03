@@ -106,6 +106,7 @@ public class Workbook {
 		String getIssue=propertiesManager.getProperty("getIssuePath", "http://localhost:8087/getIssue/");
 		String target = getIssue+ key;
 		String response = recieveResponse(target,key, json);
+		
 		if(response == null) {
 			prepareErrorMessage(Status.EXPECTATION_FAILED, "Worklog Error", "Error getting the worklog. Please retry");
 			return null;
@@ -114,7 +115,11 @@ public class Workbook {
 	}
 
 	public List<JsonObject> callLog() {
-
+		if (sprintIssue() == null) {
+			prepareErrorMessage(Status.NOT_FOUND, "Connection Error", "Couldn't connect to JIRA API");
+			return null;
+		}
+		
 		JsonObject root = Json.createReader(new StringReader(sprintIssue())).readObject();
 		JsonArray issues = root.getJsonArray("issues");
 
@@ -128,6 +133,11 @@ public class Workbook {
 
 	public void getParentKeys() {
 		List<JsonObject> filteredValues = callLog();
+		
+		if (filteredValues.size() == 0) {
+			prepareErrorMessage(Status.FORBIDDEN, "Issue Error", "No Issue");
+			return;
+		}
 
 		List<String> listOfAuthors = new ArrayList<>();
 		List<Double> listOfPoints = new ArrayList<>();
@@ -223,6 +233,11 @@ public class Workbook {
 
 	public void getAllIssues() {
 		List<JsonObject> filteredValues = callLog();
+		
+		if (filteredValues.size() == 0) {
+			prepareErrorMessage(Status.FORBIDDEN, "Issue Error", "No Issue");
+			return;
+		}
 
 		for(int i = 0; i < filteredValues.size(); i++) {
 			ExcelFile file = new ExcelFile();

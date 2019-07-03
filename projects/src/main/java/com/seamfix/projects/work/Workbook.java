@@ -16,6 +16,7 @@ import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 
 import com.seamfix.projects.model.Kanban;
 import com.seamfix.projects.model.Project;
@@ -57,6 +58,10 @@ public class Workbook {
 	}
 
 	public JsonArray getStringResponse(){
+		if (projects() == null) {
+			prepareErrorMessage(Status.NOT_FOUND, "Connection Error", "Couldn't connect to JIRA API");
+			return null;
+		}
 		JsonObject root = Json.createReader(new StringReader(projects())).readObject();
 
 		return root.getJsonArray("values");
@@ -134,5 +139,11 @@ public class Workbook {
 	public  void getJSON(){
 		getKanbanProjects();
 		getScrumProjects();
+	}
+	
+	private void prepareErrorMessage(Status status, String error, String message) {
+		dataBean.setStatus(status);
+		dataBean.setError(error);
+		dataBean.setMessage(message);
 	}
 }

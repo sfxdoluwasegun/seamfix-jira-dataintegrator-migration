@@ -9,6 +9,7 @@ import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
 import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriter;
+import javax.ws.rs.core.Response.Status;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -25,11 +26,28 @@ public class QueryData {
 	private String startDate;
 	private String endDate;
 	private String auth;
+	private String error;
+	private String message;
 
 	private int projectID;
 	private int sprintID;
 
 	private StringWriter sWriter = new StringWriter(); 
+	
+	private Status status = Status.OK;
+
+	public String toJsonErr() {
+		JsonObject json = Json.createObjectBuilder()
+				.add("error", getError())
+				.add("message", getMessage())
+				.build();
+
+		try (JsonWriter writer = Json.createWriter(getSWriter())) {
+			writer.write(json);
+		}
+		return getSWriter().toString();
+	}
+
 	/**
 	 * This method generates the JSON response.
 	 * @return JSON response of projectID,name,start date and end date.

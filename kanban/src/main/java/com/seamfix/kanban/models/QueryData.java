@@ -48,11 +48,6 @@ public class QueryData {
 
 	private Status status = Status.OK;
 	
-	/** This method produces the jsonObject error messages
-	 * 
-	 * @return jsonObject that contains the error and error message
-	 */
-
 	public String toJsonErr() {
 		JsonObject json = Json.createObjectBuilder()
 				.add("error", getError())

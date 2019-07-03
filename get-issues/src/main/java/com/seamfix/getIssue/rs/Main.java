@@ -5,6 +5,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.seamfix.getIssue.model.QueryData;
 import com.seamfix.getIssue.work.Workbook;
@@ -25,6 +26,10 @@ public class Main {
 	    dataBean.init(taskID);
 		workbook.getWorklog();
 
+		if (dataBean.getStatus().getFamily() != Status.Family.SUCCESSFUL) 
+			return Response.status(dataBean.getStatus()).entity(dataBean.toJsonErr()).type("application/json").build();  
+
+		
 		return Response.ok().entity(dataBean.rsJSON()).type("application/json").build();
 	}
 		

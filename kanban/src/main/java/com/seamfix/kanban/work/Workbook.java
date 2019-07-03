@@ -106,11 +106,11 @@ public class Workbook {
 		}
 	}
 
-
 	private JsonObject postService(String key, String json) {
 		String changelog= propertiesManager.getProperty("changelogPath", "http://localhost:8088/changelog/");
-		String target = changelog+key;
+		String target = changelog + key;
 		String response = recieveResponse(target,key, json);
+		
 		if(response == null) {
 			prepareErrorMessage(Status.EXPECTATION_FAILED, "Changelog Error", "Error getting the changelog. Please retry");
 			return null;
@@ -120,17 +120,20 @@ public class Workbook {
 
 	private JsonObject postLog(String key, String json) {
 		String getIssue= propertiesManager.getProperty("getIssuePath", "http://localhost:8087/getIssue/");
-		String target = getIssue+ key;
+		String target = getIssue + key;
 		String response = recieveResponse(target,key, json);
 		if(response == null) {
 			prepareErrorMessage(Status.EXPECTATION_FAILED, "Worklog Error", "Error getting the worklog. Please retry");
 			return null;
 		}
-
 		return Json.createReader(new StringReader(response)).readObject();
 	}
 
 	public List<JsonObject> callLog() {
+		if (kanbanIssue() == null) {
+			prepareErrorMessage(Status.NOT_FOUND, "Connection Error", "Couldn't connect to JIRA API");
+			return null;
+		}
 		JsonObject root = Json.createReader(new StringReader(kanbanIssue())).readObject();
 
 		JsonArray issues = root.getJsonArray("issues");
@@ -144,10 +147,19 @@ public class Workbook {
 	}
 
 	public void getParentKeys() {
-
+		if (kanbanIssue() == null) {
+			prepareErrorMessage(Status.NOT_FOUND, "Connection Error", "Couldn't connect to JIRA API");
+			return;
+		}
 		JsonObject root = Json.createReader(new StringReader(kanbanIssue())).readObject();
 
 		List<JsonObject> filteredValues = callLog();
+		
+		if (filteredValues.size() == 0) {
+			prepareErrorMessage(Status.FORBIDDEN, "Issue Error", "No Issue");
+			return;
+		}
+		
 		List<String> listOfAuthors = new ArrayList<>();
 		List<Double> listOfPoints = new ArrayList<>();
 		List<Double> listOfIncomplete = new ArrayList<>();
@@ -232,6 +244,11 @@ public class Workbook {
 	public void getAllIssues() {
 
 		List<JsonObject> filteredValues = callLog();
+		
+		if (filteredValues.size() == 0) {
+			prepareErrorMessage(Status.FORBIDDEN, "Issue Error", "No Issue");
+			return;
+		}
 
 		for(int i =0; i < filteredValues.size(); i++) {
 			ExcelFile file = new ExcelFile();
@@ -373,7 +390,7 @@ public class Workbook {
 
 		}
 	}
-	
+
 	private void prepareErrorMessage(Status status, String error, String message) {
 		dataBean.setStatus(status);
 		dataBean.setError(error);

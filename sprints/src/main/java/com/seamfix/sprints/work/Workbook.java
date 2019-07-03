@@ -10,6 +10,7 @@ import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 
 import com.seamfix.sprints.model.Project;
 import com.seamfix.sprints.model.QueryData;
@@ -65,6 +66,10 @@ public class Workbook {
 	 * to get the required values from the JSON response
 	 */
 	public void getJSON() {
+		if (sprints() == null) {
+			prepareErrorMessage(Status.NOT_FOUND, "Connection Error", "Couldn't connect to JIRA API");
+			return ;
+		}
 		JsonObject root = Json.createReader(new StringReader(sprints())).readObject();
 
 		JsonArray values = root.getJsonArray("values");
@@ -96,6 +101,10 @@ public class Workbook {
 	 * to get the required values from the JSON response
 	 */
 	public void sprint() {
+		if (sprintDetail() == null) {
+			prepareErrorMessage(Status.NOT_FOUND, "Connection Error", "Couldn't connect to JIRA API");
+			return ;
+		}
 		JsonObject root = Json.createReader(new StringReader(sprintDetail())).readObject();
 		
 		int id = root.getInt("id");
@@ -111,6 +120,12 @@ public class Workbook {
 		String endDate = root.getString("endDate");
 		dataBean.setEndDate(endDate);
 		}
+	}
+	
+	private void prepareErrorMessage(Status status, String error, String message) {
+		dataBean.setStatus(status);
+		dataBean.setError(error);
+		dataBean.setMessage(message);
 	}
 
 }

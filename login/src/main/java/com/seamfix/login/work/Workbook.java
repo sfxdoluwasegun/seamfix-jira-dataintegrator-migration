@@ -62,7 +62,7 @@ public class Workbook {
 	public void getRespone() {
 		int code = check().getStatus();
 		if(code == 401 ) {
-			prepareErrorMessage(Status.UNAUTHORIZED, "Login", "email or token is wrong");
+			prepareErrorMessage(Status.UNAUTHORIZED, "Login Error", "email or token is wrong");
 			return;
 		} else {
 			dataBean.setAuth(getAuthHeader());

@@ -13,6 +13,7 @@ import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 
 import com.seamfix.changelog.model.QueryData;
 
@@ -40,9 +41,14 @@ public class Workbook {
 
 	public JsonArray getStringResponse() {
 		String key = dataBean.getTaskID();
+		
+		if (changeLogs(key) == null) {
+			prepareErrorMessage(Status.NOT_FOUND, "Connection Error", "Couldn't connect the the JIRA API");
+			return null;
+		}
+		
 		JsonObject root = Json.createReader(new StringReader(changeLogs(key))).readObject();
 		return root.getJsonArray("values");
-
 	}
 
 	public void setValues() {
@@ -56,7 +62,7 @@ public class Workbook {
 				.filter(value -> value.asJsonObject().getJsonArray("items").getJsonObject(0).getString("field").equals("status"))
 				.map(value -> value.asJsonObject())
 				.collect(Collectors.toList());
-
+		
 		int i=0;
 		if(i == filteredValues.size()) {
 			dataBean.setDateCreated("No Time Moved");
@@ -106,7 +112,7 @@ public class Workbook {
 				.filter(story -> story.asJsonObject().getJsonArray("items").getJsonObject(0).getString("field").equals("Story Points"))
 				.map(story -> story.asJsonObject())
 				.collect(Collectors.toList());
-
+		
 		int k =0;
 		if(k == stories.size()) {
 			dataBean.setStoryPoint("0");
@@ -123,6 +129,12 @@ public class Workbook {
 	public void getJSON() {
 		setValues();
 		getStories();
+	}
+	
+	private void prepareErrorMessage(Status status, String error, String message) {
+		dataBean.setStatus(status);
+		dataBean.setError(error);
+		dataBean.setMessage(message);
 	}
 }
 
