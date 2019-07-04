@@ -5,11 +5,11 @@ import java.util.List;
 
 import javax.enterprise.context.RequestScoped;
 import javax.json.Json;
+import javax.json.JsonArrayBuilder;
 import javax.json.JsonObject;
-import javax.json.JsonValue;
+import javax.json.JsonObjectBuilder;
 import javax.json.JsonWriter;
 import javax.ws.rs.core.Response.Status;
-
 
 import lombok.Getter;
 import lombok.Setter;
@@ -26,7 +26,7 @@ public class QueryData {
 	private String dateModified;
 	private String reporter;
 	private String currentStatus;
-		
+	private String auth;
 	private String error;
 	private String message;
 	
@@ -35,21 +35,49 @@ public class QueryData {
 
 	private StringWriter sWriter = new StringWriter(); 
 
+	private Status status = Status.OK;
 
-	public String rsJSON() {
-		JsonObject json = (JsonObject) Json.createObjectBuilder()
-				.add("Task ID", getTaskID())
-				.add("Start Date", getDateCreated())
-				.add("End Date", getDateModified())
-				.add("Reporter", getReporter())
-				.add("Current Status", getCurrentStatus())
-				.add("Story Point", getStoryPoint())
-				.add("toString", (JsonValue) getToString())
-				.add("fromString",  (JsonValue) getFromString())
+	public String toJsonErr() {
+		JsonObject json = Json.createObjectBuilder()
+				.add("error", getError())
+				.add("message", getMessage())
 				.build();
 
-		try (JsonWriter writer = Json.createWriter(sWriter)) {
+		try (JsonWriter writer = Json.createWriter(getSWriter())) {
 			writer.write(json);
+		}
+		return getSWriter().toString();
+	}
+
+	public String rsJSON() {
+		JsonObjectBuilder arrayBuilder = Json.createObjectBuilder();
+		
+		JsonObjectBuilder json = Json.createObjectBuilder()
+				.add("taskID", getTaskID())
+				.add("startDate", getDateCreated())
+				.add("endDate", getDateModified())
+				.add("currentStatus", getCurrentStatus())
+				.add("storyPoint", getStoryPoint());
+		
+		JsonObjectBuilder toStringBuilder = Json.createObjectBuilder();
+		
+		JsonArrayBuilder fromBuilder = Json.createArrayBuilder();
+		for(String fromString : getFromString()) {
+			fromBuilder.add(fromString);
+		}
+		JsonArrayBuilder toBuilder = Json.createArrayBuilder();
+		for(String toString :  getToString()) {
+			toBuilder.add(toString);
+		}
+		
+		toStringBuilder.add("fromString",fromBuilder);
+		toStringBuilder.add("toString",toBuilder);
+		
+		json.add("flow", toStringBuilder);
+		arrayBuilder.add("issues", json);
+		
+		try (JsonWriter writer = Json.createWriter(sWriter)) {
+			writer.write(arrayBuilder.build());
 		}
 		return sWriter.toString();
 	}

@@ -12,13 +12,18 @@
 	<artifactId>changelog</artifactId>
 	<name>ChangeLog Microservice</name>
 	<description>Microservice to spool issue change log from JIRA</description>
-	
+
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
 			<plugin>
 				<groupId>io.thorntail</groupId>
 				<artifactId>thorntail-maven-plugin</artifactId>
+				<configuration>
+					<properties>
+						<java.net.preferIPv4Stack>true</java.net.preferIPv4Stack>
+					</properties>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -65,16 +70,6 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>com.nimbusds</groupId>
-			<artifactId>nimbus-jose-jwt</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcpkix-jdk15on</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>io.thorntail</groupId>
 			<artifactId>arquillian</artifactId>
 			<scope>test</scope>
@@ -96,5 +91,18 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+
+	<repositories>
+		<repository>
+			<id>nexus</id>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<url>http://nexus.seamfix.com/nexus/content/repositories</url>
+		</repository>
+	</repositories>
 
 </project>

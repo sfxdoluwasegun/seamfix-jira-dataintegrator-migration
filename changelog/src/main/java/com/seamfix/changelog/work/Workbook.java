@@ -1,9 +1,7 @@
 package com.seamfix.changelog.work;
 
 import java.io.StringReader;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,8 +12,8 @@ import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response.Status;
 
 import com.seamfix.changelog.model.QueryData;
 
@@ -25,15 +23,6 @@ public class Workbook {
 	@Inject
 	QueryData dataBean;
 
-	private static String getAuthHeader() {
-		final String email = "mabikoye@seamfix.com";
-		final String token= "wXtzMKuBuOmzoRJJrNDtCF23";
-		String auth = email +":"+ token;
-		String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes(Charset.forName("ISO-8859-1")));
-		return "Basic " + encodedAuth;
-	}
-
-
 	public  String changeLogs(String key) {
 		String target ="https://seamfix.atlassian.net/rest/api/3/issue/" + key +"/changelog?";
 		Client client = null;
@@ -41,68 +30,125 @@ public class Workbook {
 			client = ClientBuilder.newClient();
 			return client.target(target.trim())
 					.request(MediaType.APPLICATION_JSON)
-					.header(HttpHeaders.AUTHORIZATION, getAuthHeader())
+					.header("Authorization", dataBean.getAuth())
 					.get(String.class);
 		} finally {
-			if (client != null)
+			if (client != null) {
 				client.close();
+			}
 		}
 	}
 
 
-	public  void getJSON(){
+	public JsonArray getStringResponse() {
 		String key = dataBean.getTaskID();
+		
+		if (changeLogs(key) == null) {
+			prepareErrorMessage(Status.NOT_FOUND, "Connection Error", "Couldn't connect the the JIRA API");
+			return null;
+		}
+		
 		JsonObject root = Json.createReader(new StringReader(changeLogs(key))).readObject();
+		
+		if (root == null) {
+			prepareErrorMessage(Status.FORBIDDEN, "Changelog Error", "Couldn't get changelog");
+			return null;
+		}
+		return root.getJsonArray("values");
+	}
 
+	public void setValues() {
 
+		JsonArray values = getStringResponse();
+		
+		if (values == null) {
+			prepareErrorMessage(Status.FORBIDDEN, "Changelog Error", "Couldn't get changelog");
+			return;
+		}
 
 		List<String> listOfFromString = new ArrayList<>();
 		List<String> listOfToString = new ArrayList<>();
-
-		JsonArray values = root.getJsonArray("values");
-
 		List<JsonObject> filteredValues = values
 				.stream()
 				.filter(value -> value.asJsonObject().getJsonArray("items").getJsonObject(0).getString("field").equals("status"))
 				.map(value -> value.asJsonObject())
 				.collect(Collectors.toList());
+		
+		int i=0;
+		if(i == filteredValues.size()) {
+			dataBean.setDateCreated("No Time Moved");
+			dataBean.setDateModified("No Time Moved");
+			dataBean.setCurrentStatus("Closed");
 
+			String fromString ="Open";
+			listOfFromString.add(fromString);
+			dataBean.setFromString(listOfFromString);
+
+			String toString = "Closed";
+			listOfToString.add(toString);
+			dataBean.setToString(listOfToString);
+		}else {     
+			for (int j = 0; j < filteredValues.size(); j++) {
+				String createdTime = filteredValues.get(0).getString("created");
+				dataBean.setDateCreated(createdTime);
+
+				String modifiedTime = filteredValues.get(filteredValues.size() - 1).getString("created");
+				dataBean.setDateModified(modifiedTime);
+
+				JsonObject value = filteredValues.get(j);
+
+				String fromString = value.getJsonArray("items").getJsonObject(0).getString("fromString");
+				listOfFromString.add(j,fromString);
+				dataBean.setFromString(listOfFromString);
+
+				String toString = value.getJsonArray("items").getJsonObject(0).getString("toString");
+				listOfToString.add(j,toString);
+
+				dataBean.setToString(listOfToString);
+
+				if(listOfToString.size() == 1) {
+					String currentStatus = listOfToString.get(0);
+					dataBean.setCurrentStatus(currentStatus);
+				}else {
+					String currentStatus = listOfToString.get(listOfToString.size() - 1);
+					dataBean.setCurrentStatus(currentStatus);
+				}
+			}
+		}	
+	}
+	public void getStories(){
+		JsonArray values = getStringResponse();
+		if (values == null || values.isEmpty()) {
+			prepareErrorMessage(Status.FORBIDDEN, "Changelog Error", "Couldn't get stories");
+			return;
+		}
 		List<JsonObject> stories = values
 				.stream()
 				.filter(story -> story.asJsonObject().getJsonArray("items").getJsonObject(0).getString("field").equals("Story Points"))
 				.map(story -> story.asJsonObject())
 				.collect(Collectors.toList());
+		
+		int k =0;
+		if(k == stories.size()) {
+			dataBean.setStoryPoint("0");
+		}else {
+			for(JsonObject storyAll: stories) {
 
-		for (int j = 0; j < filteredValues.size(); j++) {
-
-			JsonObject value = filteredValues.get(j);
-
-			String fromString = value.getJsonArray("items").getJsonObject(0).getString("fromString");
-			listOfFromString.add(fromString);
-			dataBean.setFromString(listOfFromString);
-
-			String toString = value.getJsonArray("items").getJsonObject(0).getString("toString");
-			listOfToString.add(toString);
-			dataBean.setToString(listOfFromString);
-
-			String currentStatus = listOfToString.get(listOfToString.size() - 1);
-			dataBean.setCurrentStatus(currentStatus);
-
-			String createdTime = filteredValues.get(0).getString("created");
-			dataBean.setDateCreated(createdTime);
-
-			String modifiedTime = filteredValues.get(filteredValues.size() - 1).getString("created");
-			dataBean.setDateModified(modifiedTime);
-
-			String reporter = value.getJsonObject("author").getString("displayName");
-			dataBean.setReporter(reporter);
-
+				String storyPoint = storyAll.getJsonArray("items").getJsonObject(0).getString("toString");
+				dataBean.setStoryPoint(storyPoint);
+			}
 		}
-		for (int k = 0; k < stories.size(); k++) {
-			JsonObject storyAll = stories.get(k);
-			String storyPoint = storyAll.getJsonArray("items").getJsonObject(0).getString("fromString");
-			dataBean.setStoryPoint(storyPoint);
-		}
+	}
+
+	public void getJSON() {
+		setValues();
+		getStories();
+	}
+	
+	private void prepareErrorMessage(Status status, String error, String message) {
+		dataBean.setStatus(status);
+		dataBean.setError(error);
+		dataBean.setMessage(message);
 	}
 }
 
