@@ -48,6 +48,11 @@ public class Workbook {
 		}
 		
 		JsonObject root = Json.createReader(new StringReader(changeLogs(key))).readObject();
+		
+		if (root == null) {
+			prepareErrorMessage(Status.FORBIDDEN, "Changelog Error", "Couldn't get changelog");
+			return null;
+		}
 		return root.getJsonArray("values");
 	}
 
@@ -112,6 +117,10 @@ public class Workbook {
 	}
 	public void getStories(){
 		JsonArray values = getStringResponse();
+		if (values == null || values.isEmpty()) {
+			prepareErrorMessage(Status.FORBIDDEN, "Changelog Error", "Couldn't get stories");
+			return;
+		}
 		List<JsonObject> stories = values
 				.stream()
 				.filter(story -> story.asJsonObject().getJsonArray("items").getJsonObject(0).getString("field").equals("Story Points"))
@@ -122,8 +131,7 @@ public class Workbook {
 		if(k == stories.size()) {
 			dataBean.setStoryPoint("0");
 		}else {
-			for(k = 0;k<stories.size(); k++) {
-				JsonObject storyAll = stories.get(k);
+			for(JsonObject storyAll: stories) {
 
 				String storyPoint = storyAll.getJsonArray("items").getJsonObject(0).getString("toString");
 				dataBean.setStoryPoint(storyPoint);

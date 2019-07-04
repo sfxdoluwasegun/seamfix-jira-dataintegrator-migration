@@ -55,6 +55,10 @@ public class Workbook {
 		dataBean.setTaskID(taskID);
 
 		JsonObject values = root.getJsonObject("fields");
+		if (values == null || values.isEmpty()) {
+			prepareErrorMessage(Status.FORBIDDEN, "Worklog Error", "Can't get worklog");
+			return;
+		}
 
 		boolean workLogJson = values.asJsonObject().getJsonObject("worklog")
 				.getJsonArray("worklogs").isEmpty();
