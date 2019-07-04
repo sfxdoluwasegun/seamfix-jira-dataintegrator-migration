@@ -74,7 +74,7 @@ public class Workbook {
 
 		JsonArray values = root.getJsonArray("values");
 		
-		if (values.isEmpty() || values.isNull(0)) {
+		if (values == null || values.isEmpty()) {
 			prepareErrorMessage(Status.FORBIDDEN, "Project Error", "Empty. Please try again.");
 			return ;
 		}
