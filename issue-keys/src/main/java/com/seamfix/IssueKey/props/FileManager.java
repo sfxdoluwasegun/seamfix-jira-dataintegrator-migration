@@ -103,9 +103,9 @@ public class FileManager {
 		if (props == null || props.isEmpty()) {
 			propertyMap = new HashMap<String, String>();
 			propertyMap.put(key, defaultVal);
-		} else
+		} else {
 			return props;
-
+		}
 		if (propertyMap != null)
 			saveProperties(propertyMap);
 

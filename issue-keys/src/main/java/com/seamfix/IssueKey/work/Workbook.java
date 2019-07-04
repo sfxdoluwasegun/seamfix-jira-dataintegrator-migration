@@ -62,8 +62,9 @@ public class Workbook {
 					.header("Authorization", dataBean.getAuth())
 					.get(String.class);
 		} finally {
-			if (client != null)
+			if (client != null) {
 				client.close();
+			}
 		}
 	}
 

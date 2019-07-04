@@ -3,6 +3,6 @@ package com.seamfix.getIssue.tools;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-@ApplicationPath(value = "getIssue")
+@ApplicationPath(value = "get-issue")
 public class WSRoot extends Application {
 }

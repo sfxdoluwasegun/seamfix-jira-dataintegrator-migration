@@ -20,8 +20,8 @@ public class Main {
 	QueryData dataBean;
 	
 	@GET
-	@Path("/{projectID}")
-	public Response call(@PathParam("projectID") int projectID) {
+	@Path("/{projectid}")
+	public Response call(@PathParam("projectid") int projectID) {
 		 dataBean.init( projectID);
 		 workbook.getParentKeys();
 		
@@ -32,8 +32,8 @@ public class Main {
 	}
 	
 	@GET
-	@Path("/file/{projectID}")
-	public Response callFile (@PathParam("projectID") int projectID) {
+	@Path("/file/{projectid}")
+	public Response callFile (@PathParam("projectid") int projectID) {
 		 dataBean.init( projectID);
 		 workbook.getAllIssues();
 		 

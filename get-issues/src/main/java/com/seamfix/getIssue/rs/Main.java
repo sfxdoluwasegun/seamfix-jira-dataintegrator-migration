@@ -26,9 +26,9 @@ public class Main {
 	    dataBean.init(taskID);
 		workbook.getWorklog();
 
-		if (dataBean.getStatus().getFamily() != Status.Family.SUCCESSFUL) 
+		if (dataBean.getStatus().getFamily() != Status.Family.SUCCESSFUL) {
 			return Response.status(dataBean.getStatus()).entity(dataBean.toJsonErr()).type("application/json").build();  
-
+		}
 		
 		return Response.ok().entity(dataBean.rsJSON()).type("application/json").build();
 	}
