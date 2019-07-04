@@ -63,29 +63,38 @@ public class Workbook {
 			return null;
 		}
 		JsonObject root = Json.createReader(new StringReader(projects())).readObject();
+		if (root == null ) {
+			prepareErrorMessage(Status.FORBIDDEN, "Project Error", "Empty. Please try again");
+			return null ;
+		}
 
 		return root.getJsonArray("values");
 	}	
 
 	public void getKanbanProjects() {
 		JsonArray values = getStringResponse();
+		
+		if (values == null || values.isEmpty()) {
+			prepareErrorMessage(Status.FORBIDDEN, "Kanbans Error", "This isn't kanban");
+			return ;
+		}
+		
 		List<JsonObject> kanbans = values
 				.stream()
 				.filter(kandan -> kandan.asJsonObject().getString("type").equals("kanban"))
 				.map(kandan -> kandan.asJsonObject())
 				.collect(Collectors.toList());	
 		
-		if (kanbans == null || kanbans.size() == 0) {
-			prepareErrorMessage(Status.NOT_FOUND, "Kanbans Error", "This isn't kanban");
+		if (kanbans == null || kanbans.isEmpty()) {
+			prepareErrorMessage(Status.FORBIDDEN, "Kanbans Error", "This isn't kanban");
 			return ;
 		}
 		
-		for(int i=  0; i < kanbans.size(); i++) {
+		for(JsonObject value: kanbans) {
 
 			Project project = new Project();
 			Kanban kanban = new Kanban();
 
-			JsonObject value = kanbans.get(i);
 			int id = value.asJsonObject().getInt("id");
 			project.setProjectID(id);
 			kanban.setProjectID(id);
@@ -108,6 +117,13 @@ public class Workbook {
 
 	public void getScrumProjects() {
 		JsonArray values = getStringResponse();
+		
+
+		if (values == null || values.isEmpty()) {
+			prepareErrorMessage(Status.FORBIDDEN, "Kanbans Error", "This isn't kanban");
+			return ;
+		}
+		
 
 		List<JsonObject> scrums = values
 				.stream()
@@ -115,17 +131,16 @@ public class Workbook {
 				.map(scrum -> scrum.asJsonObject())
 				.collect(Collectors.toList());
 		
-		if (scrums == null || scrums.size() == 0) {
-			prepareErrorMessage(Status.NOT_FOUND, "Scrums Error", "This isn't scrum");
+		if (scrums == null || scrums.isEmpty()) {
+			prepareErrorMessage(Status.FORBIDDEN, "Scrums Error", "This isn't scrum");
 			return ;
 		}
 
-		for(int j=  0; j < scrums.size(); j++) {
+		for(JsonObject value: scrums) {
 
 			Project project = new Project();
 			Scrum scrum = new Scrum();
 
-			JsonObject value = scrums.get(j);
 			int id = value.asJsonObject().getInt("id");
 			project.setProjectID(id);
 			scrum.setProjectID(id);
@@ -142,7 +157,6 @@ public class Workbook {
 
 			dataBean.getProjects().add( project);
 			dataBean.getScrum().add(scrum);
-
 		}
 	}
 

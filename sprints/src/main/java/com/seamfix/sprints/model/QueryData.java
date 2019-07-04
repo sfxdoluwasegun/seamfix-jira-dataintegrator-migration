@@ -100,7 +100,7 @@ public class QueryData {
 		this.projectID = projectID;
 	}
 
-	public void initS( int sprintID) {
+	public void initSprint( int sprintID) {
 		this.sprintID = sprintID;
 	}
 

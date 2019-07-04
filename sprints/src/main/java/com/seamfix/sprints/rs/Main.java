@@ -30,8 +30,9 @@ public class Main {
 		 dataBean.init(projectID);
 		workbook.getJSON();
 		
-		if (dataBean.getStatus().getFamily() != Status.Family.SUCCESSFUL) 
+		if (dataBean.getStatus().getFamily() != Status.Family.SUCCESSFUL) { 
 			return Response.status(dataBean.getStatus()).entity(dataBean.toJsonErr()).type("application/json").build();  
+		}
 
 		return Response.ok().entity(dataBean.JSON()).type("application/json").build();
 	}
@@ -44,8 +45,12 @@ public class Main {
 	@GET
 	@Path("/sprint/{sprintID}")
 	public Response callSprint(@PathParam("sprintID") int sprintID) {
-		dataBean.initS(sprintID);
+		dataBean.initSprint(sprintID);
 		workbook.sprint();
+		
+		if (dataBean.getStatus().getFamily() != Status.Family.SUCCESSFUL) { 
+			return Response.status(dataBean.getStatus()).entity(dataBean.toJsonErr()).type("application/json").build();  
+		}
 		
 		return Response.ok().entity(dataBean.getSprintDetail()).type("application/json").build();
 	}

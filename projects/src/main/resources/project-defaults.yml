@@ -1,5 +1,7 @@
 # A project defaults for use with MP-JWT auth-method that include additional role mapping
 swarm:
+     bind:
+        address: localhost
      port:
         offset: 5
   # Example of passing in token verification information via project file
