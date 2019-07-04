@@ -53,7 +53,7 @@ public class Workbook {
 	Logger logger;
 
 	public  String sprintIssue() {
-		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board/"+dataBean.getProjectID()+"/issue?maxResults=100";
+		String target =propertiesManager.getProperty("sprintIssueUrl", "https://seamfix.atlassian.net/rest/agile/1.0/board/"+dataBean.getProjectID()+"/issue?maxResults=100");
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();

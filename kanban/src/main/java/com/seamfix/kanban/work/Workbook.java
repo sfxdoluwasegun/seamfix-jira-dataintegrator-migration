@@ -63,7 +63,7 @@ public class Workbook {
 	}
 
 	public  String kanbanIssue() {
-		String url ="https://seamfix.atlassian.net/rest/api/2/search?jql=";
+		String url =propertiesManager.getProperty("kanbanUrl", "https://seamfix.atlassian.net/rest/api/2/search?jql=");
 		if(dataBean.getMaxResults() == 0) {
 			dataBean.setMaxResults(100);
 		}
@@ -152,10 +152,14 @@ public class Workbook {
 			return;
 		}
 		JsonObject root = Json.createReader(new StringReader(kanbanIssue())).readObject();
+		if ( root == null) {
+			prepareErrorMessage(Status.FORBIDDEN, "Issue Error", "No Issue");
+			return;
+		}
 
 		List<JsonObject> filteredValues = callLog();
 		
-		if (filteredValues.size() == 0) {
+		if (filteredValues.isEmpty() || filteredValues == null) {
 			prepareErrorMessage(Status.FORBIDDEN, "Issue Error", "No Issue");
 			return;
 		}
@@ -168,9 +172,8 @@ public class Workbook {
 		int total = root.getInt("total");
 		dataBean.setTotal(total);
 
-		for(int i =0; i < filteredValues.size(); i++) {
+		for(JsonObject issue : filteredValues) {
 			Issues	issuesq  = new Issues();
-			JsonObject issue = filteredValues.get(i);
 
 			String id = issue.getString("id");
 			issuesq.setId(id);
@@ -242,18 +245,17 @@ public class Workbook {
 	}
 
 	public void getAllIssues() {
-
+	
 		List<JsonObject> filteredValues = callLog();
 		
-		if (filteredValues.size() == 0) {
+		if (filteredValues == null || filteredValues.isEmpty()) {
 			prepareErrorMessage(Status.FORBIDDEN, "Issue Error", "No Issue");
 			return;
 		}
 
-		for(int i =0; i < filteredValues.size(); i++) {
+		for(JsonObject issue: filteredValues) {
 			ExcelFile file = new ExcelFile();
 			List<String> listOfFromString = new ArrayList<>();
-			JsonObject issue = filteredValues.get(i);
 
 			String key = issue.getString("key");
 			file.setKey(key);
@@ -267,7 +269,7 @@ public class Workbook {
 
 			JsonObject logObject = postLog(key, jsonString);
 
-			if(logObject == null) {
+			if(logObject == null || logObject.isEmpty()) {
 				prepareErrorMessage(Status.EXPECTATION_FAILED, "Worklog Error", "Error getting the worklog. Please retry");
 				return;
 			}
@@ -275,7 +277,7 @@ public class Workbook {
 			String worklog = logObject.getString("Worklog");
 			file.setWorklog(worklog);
 
-			if(jsonObject == null) {
+			if(jsonObject == null || jsonObject.isEmpty()) {
 				prepareErrorMessage(Status.EXPECTATION_FAILED, "Changelog Error", "Error getting the changelog. Please retry");
 				return;
 			}
