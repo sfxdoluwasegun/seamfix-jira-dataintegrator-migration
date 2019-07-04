@@ -54,6 +54,11 @@ public class Workbook {
 	public void setValues() {
 
 		JsonArray values = getStringResponse();
+		
+		if (values == null) {
+			prepareErrorMessage(Status.FORBIDDEN, "Changelog Error", "Couldn't get changelog");
+			return;
+		}
 
 		List<String> listOfFromString = new ArrayList<>();
 		List<String> listOfToString = new ArrayList<>();

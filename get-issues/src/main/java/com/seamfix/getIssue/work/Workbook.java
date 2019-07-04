@@ -46,6 +46,11 @@ public class Workbook {
 		
 		JsonObject root = Json.createReader(new StringReader(getIssue(key))).readObject();
 
+		if (root == null) {
+			prepareErrorMessage(Status.FORBIDDEN, "Worklog Error", "Can't get worklog");
+			return;
+		}
+		
 		String taskID = root.getString("key");
 		dataBean.setTaskID(taskID);
 

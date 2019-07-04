@@ -75,7 +75,7 @@ public class Workbook {
 				.map(kandan -> kandan.asJsonObject())
 				.collect(Collectors.toList());	
 		
-		if (kanbans == null) {
+		if (kanbans == null || kanbans.size() == 0) {
 			prepareErrorMessage(Status.NOT_FOUND, "Kanbans Error", "This isn't kanban");
 			return ;
 		}
@@ -115,7 +115,7 @@ public class Workbook {
 				.map(scrum -> scrum.asJsonObject())
 				.collect(Collectors.toList());
 		
-		if (scrums == null) {
+		if (scrums == null || scrums.size() == 0) {
 			prepareErrorMessage(Status.NOT_FOUND, "Scrums Error", "This isn't scrum");
 			return ;
 		}

@@ -73,6 +73,11 @@ public class Workbook {
 		JsonObject root = Json.createReader(new StringReader(sprints())).readObject();
 
 		JsonArray values = root.getJsonArray("values");
+		
+		if (values.isEmpty() || values.isNull(0)) {
+			prepareErrorMessage(Status.FORBIDDEN, "Project Error", "Empty. Please try again.");
+			return ;
+		}
 
 		for(int i = 0; i < values.size(); i++ ) {
 			Project project = new Project();
@@ -107,6 +112,10 @@ public class Workbook {
 		}
 		JsonObject root = Json.createReader(new StringReader(sprintDetail())).readObject();
 		
+		if (root.isEmpty()) {
+			prepareErrorMessage(Status.FORBIDDEN, "Sprint Error", "Empty. Please try again.");
+			return ;
+		}
 		int id = root.getInt("id");
 		dataBean.setSprintID(id);
 		
