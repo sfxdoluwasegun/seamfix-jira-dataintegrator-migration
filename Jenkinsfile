@@ -10,8 +10,14 @@ pipeline {
 			steps {
 				echo 'Running build'
 				sh 'mvn clean package -U'
-				archiveArtifacts artifacts: 'login/target/*.jar', 'get-issues/target/*.jar', 'changelog/target/*.jar', 'projects/target/*.jar',  'sprints/target/*.jar', 'issues-keys/target/*.jar', 'kanban/target/*.jar', fingerprint: true
-			}
+				archiveArtifacts artifacts: 'login/target/*.jar', fingerprint: true
+				archiveArtifacts artifacts: 'get-issues/target/*.jar', fingerprint: true
+				archiveArtifacts artifacts: 'changelog/target/*.jar', fingerprint: true
+				archiveArtifacts artifacts: 'projects/target/*.jar', fingerprint: true
+				archiveArtifacts artifacts: 'sprints/target/*.jar', fingerprint: true
+				archiveArtifacts artifacts: 'issues-keys/target/*.jar', fingerprint: true
+				archiveArtifacts artifacts: 'kanban/target/*.jar', fingerprint: true
+				}
 		}
 		
 
