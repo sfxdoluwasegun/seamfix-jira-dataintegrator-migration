@@ -10,7 +10,7 @@ pipeline {
 			steps {
 				echo 'Running build'
 				sh 'mvn clean package -U'
-				archiveArtifacts artifacts: '', fingerprint: true
+				archiveArtifacts artifacts: '**', fingerprint: true
 			}
 		}
 		
