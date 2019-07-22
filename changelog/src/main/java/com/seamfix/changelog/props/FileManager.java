@@ -11,7 +11,13 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.inject.Inject;
+
 public class FileManager {
+	
+	@Inject
+	static
+	PropertiesManager propertiesManager;
 
 	private Logger log = Logger.getLogger(this.getClass().getName());
 
@@ -22,7 +28,7 @@ public class FileManager {
 	protected FileManager propsManager;
 
 	public FileManager() {
-		this("C:/config.properties");
+		this(propertiesManager.getProperty("configUrl","C:/config.properties"));
 	}
 
 	public FileManager(String filepath) {

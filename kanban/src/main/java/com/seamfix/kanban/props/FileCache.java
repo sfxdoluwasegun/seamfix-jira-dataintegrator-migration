@@ -3,6 +3,8 @@ package com.seamfix.kanban.props;
 import java.io.File;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.inject.Inject;
+
 /**
  * Caches property file for use in application life cycle.
  * 
@@ -10,6 +12,10 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  */
 public class FileCache {
+	
+	@Inject
+	static
+	PropertiesManager propertiesManager;
 	
 	private static ConcurrentHashMap<String, FileManager> pties = new ConcurrentHashMap<String, FileManager>();
 
@@ -35,7 +41,7 @@ public class FileCache {
 	 * @return the property file
 	 */
 	public static FileManager getPropertyFile() {
-		String filepath = "C:/config.properties";
+		String filepath =propertiesManager.getProperty("configUrl","C:/config.properties");
 		FileManager pf = pties.get(filepath);
 		if(pf == null){
 			pf = new FileManager(filepath);

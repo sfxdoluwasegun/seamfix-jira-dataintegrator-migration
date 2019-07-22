@@ -1,4 +1,4 @@
-package com.seamfix.changelog.props;
+package com.seamfix.projects.props;
 
 import java.io.File;
 import java.util.concurrent.ConcurrentHashMap;
