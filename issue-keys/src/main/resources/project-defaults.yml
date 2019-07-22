@@ -12,7 +12,7 @@ swarm:
         periodic-rotating-file-handlers:
             FILE:
                 file:
-                    path: issue-keys.log
+                    path: log/issue-keys.log
                 suffix: .yyyy-MM-dd
                 named-formatter: COLOR_PATTERN
         root-logger:
