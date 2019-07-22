@@ -3,6 +3,7 @@ package com.seamfix.login.work;
 import java.io.StringWriter;
 import java.nio.charset.Charset;
 import java.util.Base64;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -21,6 +22,9 @@ import com.seamfix.login.models.QueryData;
 public class Workbook {
 	@Inject
 	QueryData dataBean;
+	
+	@Inject
+	Logger logger;
 
 	public String createJson() {
 

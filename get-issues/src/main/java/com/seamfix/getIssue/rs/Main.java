@@ -1,5 +1,7 @@
 package com.seamfix.getIssue.rs;
 
+import java.util.logging.Logger;
+
 import javax.inject.Inject;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -12,6 +14,10 @@ import com.seamfix.getIssue.work.Workbook;
 
 @Path("/")
 public class Main {
+	
+	@Inject
+	Logger log;
+	
 	
 	@Inject
 	QueryData dataBean;

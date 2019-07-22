@@ -1,6 +1,7 @@
 package com.seamfix.getIssue.work;
 
 import java.io.StringReader;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -12,6 +13,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import com.seamfix.getIssue.model.QueryData;
+import com.seamfix.getIssue.props.PropertiesManager;
 
 
 @Dependent
@@ -19,9 +21,15 @@ public class Workbook {
 
 	@Inject
 	QueryData dataBean;
+	
+	@Inject
+	PropertiesManager propertiesManager;
+
+	@Inject
+	Logger logger;
 
 	public  String getIssue(String key) {
-		String target = "https://seamfix.atlassian.net/rest/api/3/issue/" + key;
+		String target =propertiesManager.getProperty("getIssueUrl","https://seamfix.atlassian.net/rest/api/3/issue/" + key);
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
