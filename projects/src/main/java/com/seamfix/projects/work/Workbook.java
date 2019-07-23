@@ -22,6 +22,7 @@ import com.seamfix.projects.model.Kanban;
 import com.seamfix.projects.model.Project;
 import com.seamfix.projects.model.QueryData;
 import com.seamfix.projects.model.Scrum;
+import com.seamfix.projects.props.PropertiesManager;
 
 
 @Dependent
@@ -30,6 +31,9 @@ public class Workbook {
 	@Inject
 	QueryData dataBean;
 
+	@Inject
+	PropertiesManager propertiesManager;
+	
 	public String recieveResponse(String target,String key, String jsonRequest) throws BadRequestException, ServiceUnavailableException, WebApplicationException {
 		Client client = null;
 		try {
@@ -43,7 +47,7 @@ public class Workbook {
 	}
 
 	public  String projects() {
-		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board?startAt="+dataBean.getProjectSize();
+		String target =propertiesManager.getProperty("projectsUrl","https://seamfix.atlassian.net/rest/agile/1.0/board?startAt="+dataBean.getProjectSize());
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();

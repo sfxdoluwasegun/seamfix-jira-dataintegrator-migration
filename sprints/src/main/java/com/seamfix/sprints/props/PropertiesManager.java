@@ -1,4 +1,4 @@
-package com.seamfix.IssueKey.props;
+package com.seamfix.sprints.props;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;

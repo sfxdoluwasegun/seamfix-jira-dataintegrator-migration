@@ -1,6 +1,7 @@
 package com.seamfix.sprints.work;
 
 import java.io.StringReader;
+import java.util.logging.Logger;
 
 import javax.enterprise.context.Dependent;
 import javax.inject.Inject;
@@ -14,6 +15,7 @@ import javax.ws.rs.core.Response.Status;
 
 import com.seamfix.sprints.model.Project;
 import com.seamfix.sprints.model.QueryData;
+import com.seamfix.sprints.props.PropertiesManager;
 
 
 @Dependent
@@ -22,12 +24,18 @@ public class Workbook {
 	@Inject
 	QueryData dataBean;
 	
+	@Inject
+	PropertiesManager propertiesManager;
+	
+	@Inject
+	Logger logger;
+	
 	/**This method calls the project JIRA API
 	 * 
 	 * @return JSON string response
 	 */
 	public  String sprints() {
-		String target ="https://seamfix.atlassian.net/rest/agile/1.0/board/" + dataBean.getProjectID() +"/sprint/";
+		String target =propertiesManager.getProperty("sprintsUrl", "https://seamfix.atlassian.net/rest/agile/1.0/board/" + dataBean.getProjectID() +"/sprint/");
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
@@ -46,7 +54,7 @@ public class Workbook {
 	 * @return JSON string response
 	 */
 	public String sprintDetail() {
-		String target ="https://seamfix.atlassian.net/rest/agile/1.0/sprint/" + dataBean.getSprintID();
+		String target =propertiesManager.getProperty("sprintDetailsnUrl", "https://seamfix.atlassian.net/rest/agile/1.0/sprint/" + dataBean.getSprintID());
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();

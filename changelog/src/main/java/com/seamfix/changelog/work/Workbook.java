@@ -3,6 +3,7 @@ package com.seamfix.changelog.work;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
@@ -16,15 +17,22 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 
 import com.seamfix.changelog.model.QueryData;
+import com.seamfix.changelog.props.PropertiesManager;
 
 @Dependent
 public class Workbook {
 
 	@Inject
 	QueryData dataBean;
+	
+	@Inject
+	PropertiesManager propertiesManager;
+
+	@Inject
+	Logger logger;
 
 	public  String changeLogs(String key) {
-		String target ="https://seamfix.atlassian.net/rest/api/3/issue/" + key +"/changelog?";
+		String target =propertiesManager.getProperty("changelogUrl", "https://seamfix.atlassian.net/rest/api/3/issue/" + key +"/changelog?");
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
@@ -38,7 +46,6 @@ public class Workbook {
 			}
 		}
 	}
-
 
 	public JsonArray getStringResponse() {
 		String key = dataBean.getTaskID();

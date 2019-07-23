@@ -1,5 +1,7 @@
 package com.seamfix.login.rs;
 
+import java.util.logging.Logger;
+
 import javax.inject.Inject;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -12,6 +14,10 @@ import com.seamfix.login.work.Workbook;
 
 @Path(value = "/")
 public class Main {
+	
+	@Inject
+	Logger log;
+	
 	@Inject
 	Workbook workbook;
 

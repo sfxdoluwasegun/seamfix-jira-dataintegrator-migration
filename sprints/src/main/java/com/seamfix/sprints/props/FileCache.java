@@ -1,4 +1,4 @@
-package com.seamfix.kanban.props;
+package com.seamfix.sprints.props;
 
 import java.io.File;
 import java.util.concurrent.ConcurrentHashMap;

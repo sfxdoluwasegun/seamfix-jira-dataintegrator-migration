@@ -1,4 +1,4 @@
-package com.seamfix.IssueKey.props;
+package com.seamfix.changelog.props;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
