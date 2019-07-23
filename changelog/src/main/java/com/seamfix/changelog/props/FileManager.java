@@ -11,31 +11,21 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.inject.Inject;
+import javax.enterprise.context.ApplicationScoped;
 
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@ApplicationScoped
 public class FileManager {
 	
-	@Inject
-	static
-	PropertiesManager propertiesManager;
-
 	private Logger log = Logger.getLogger(this.getClass().getName());
 
-	private String filepath;
+	private String targetPropertyFilepath ;
 
 	private Properties properties;
-
-	protected FileManager propsManager;
-
-	public FileManager() {
-		this(propertiesManager.getProperty("configUrl","C:/config.properties"));
-	}
-
-	public FileManager(String filepath) {
-		properties = new Properties();
-		this.filepath = filepath;
-		loadProperties();
-	}
 
 	/**
 	 * Load properties.
@@ -44,7 +34,9 @@ public class FileManager {
 	 */
 	public Properties loadProperties() {
 		
-		try (FileReader fis = new FileReader(filepath)) {
+		properties = new Properties();
+		
+		try (FileReader fis = new FileReader(getTargetPropertyFilepath())) {
 			properties.load(fis);
 		} catch (FileNotFoundException e) {
 			createProperties();
@@ -60,7 +52,7 @@ public class FileManager {
 	 */
 	private void createProperties() {
 		
-		try (FileOutputStream fos = new FileOutputStream(filepath)) {
+		try (FileOutputStream fos = new FileOutputStream(getTargetPropertyFilepath())) {
 			properties.store(fos, "Auto generated document");
 			fos.flush();
 		} catch (Exception e) {
@@ -103,17 +95,14 @@ public class FileManager {
 	 */
 	public String getProperty(String key, String defaultVal) {
 
-		HashMap<String, String> propertyMap = null;
-
-		String props = properties.getProperty(key, "");
-		if (props == null || props.isEmpty()) {
-			propertyMap = new HashMap<String, String>();
+		HashMap<String, String> propertyMap = new HashMap<String, String>();
+		if (defaultVal != null && !defaultVal.isEmpty()) {
 			propertyMap.put(key, defaultVal);
-		} else {
-			return props;
+		}else {
+			return properties.getProperty(key);
 		}
-		if (propertyMap != null)
-			saveProperties(propertyMap);
+		
+		saveProperties(propertyMap);
 
 		return defaultVal;
 	}

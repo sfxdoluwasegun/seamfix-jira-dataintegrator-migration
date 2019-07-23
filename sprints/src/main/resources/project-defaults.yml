@@ -1,5 +1,8 @@
 logger:
     level: DEBUG
+app-properties:
+  file:
+    path: "C:\\jcodes\\RND\\jira-dataintegrator\\props"
 swarm:
   bind:
     address: localhost
