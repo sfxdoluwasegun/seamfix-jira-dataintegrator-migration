@@ -5,11 +5,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import javax.enterprise.context.Dependent;
@@ -18,9 +18,6 @@ import javax.json.Json;
 import javax.json.JsonArray;
 import javax.json.JsonObject;
 import javax.json.JsonWriter;
-import javax.ws.rs.BadRequestException;
-import javax.ws.rs.ServiceUnavailableException;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -93,8 +90,8 @@ public class Workbook {
 	}
 
 	private JsonObject postService(String key, String json) {
-		String changelog= propertiesManager.getProperty("changelogPath", "http://localhost:8088/changelog/");
-		String target = changelog+key;
+		String changelog= propertiesManager.getProperty("changelogPath", "http://localhost:8088/changelog/"+key);
+		String target = changelog;
 		String response = recieveResponse(target,key, json);
 		if(response == null) {
 			prepareErrorMessage(Status.EXPECTATION_FAILED, "Changelog Error", "Error getting the changelog. Please retry");
