@@ -79,7 +79,7 @@ public class Workbook {
 		return sWriter.toString();
 	}
 
-	public String recieveResponse(String target,String key, String jsonRequest) throws BadRequestException, ServiceUnavailableException, WebApplicationException {
+	public String recieveResponse(String target,String key, String jsonRequest){
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
