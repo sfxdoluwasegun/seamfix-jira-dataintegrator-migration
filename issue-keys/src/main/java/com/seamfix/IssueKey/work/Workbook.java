@@ -92,9 +92,7 @@ public class Workbook {
 	private JsonObject postService(String key, String json) {
 		String changelog= propertiesManager.getProperty("changelogPath", "http://localhost:8088/changelog/");
 		String target = changelog + key;
-		System.out.println(target);
 		String response = recieveResponse(target, key, json);
-		System.out.println(response);
 		if(response == null) {
 			prepareErrorMessage(Status.EXPECTATION_FAILED, "Changelog Error", "Error getting the changelog. Please retry");
 			return null;
@@ -105,9 +103,7 @@ public class Workbook {
 	private JsonObject postLog(String key, String json) {
 		String getIssue=propertiesManager.getProperty("getIssuePath", "http://localhost:8087/get-issue/");
 		String target = getIssue + key;
-		System.out.println(target);
 		String response = recieveResponse(target,key, json);
-		System.out.println(response);
 		
 		if(response == null) {
 			prepareErrorMessage(Status.EXPECTATION_FAILED, "Worklog Error", "Error getting the worklog. Please retry");
