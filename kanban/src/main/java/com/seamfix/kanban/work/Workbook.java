@@ -107,7 +107,7 @@ public class Workbook {
 	}
 
 	private JsonObject postService(String key, String json) {
-		String changelog= propertiesManager.getProperty("changelogPath", "http://localhost:8088/changelog/");
+		String changelog= propertiesManager.getProperty("changelogPath", "http://192.168.11.23:8106/changelog/");
 		String target = changelog + key;
 		String response = recieveResponse(target,key, json);
 		
@@ -119,7 +119,7 @@ public class Workbook {
 	}
 
 	private JsonObject postLog(String key, String json) {
-		String getIssue= propertiesManager.getProperty("getIssuePath", "http://localhost:8087/getIssue/");
+		String getIssue= propertiesManager.getProperty("getIssuePath", "http://192.168.10.30:8100/get-issue/");
 		String target = getIssue + key;
 		String response = recieveResponse(target,key, json);
 		if(response == null) {
@@ -373,7 +373,7 @@ public class Workbook {
 				sheet.autoSizeColumn(p);
 			}
 			// Write the output to a file
-			String sourcePath= propertiesManager.getProperty("kanbanExcelFile","C:\\jcodes\\RND\\jira-dataintegrator\\");
+			String sourcePath= propertiesManager.getProperty("kanbanExcelFile","C:\\Users\\Seamfix\\Downloads");
 			FileOutputStream fileOut = null;
 			try {
 				fileOut = new FileOutputStream(sourcePath + dataBean.getProjectName() + "-"+ dataBean.getEndDate()+"-"+"Log.xlsx");
