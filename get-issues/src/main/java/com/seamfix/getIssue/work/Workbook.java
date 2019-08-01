@@ -29,7 +29,8 @@ public class Workbook {
 	Logger logger;
 
 	public  String getIssue(String key) {
-		String target =propertiesManager.getProperty("getIssueUrl","https://seamfix.atlassian.net/rest/api/3/issue/" + key);
+		String getIssue =propertiesManager.getProperty("getIssueUrl","https://seamfix.atlassian.net/rest/api/3/issue/");
+		String target = getIssue + key;
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();

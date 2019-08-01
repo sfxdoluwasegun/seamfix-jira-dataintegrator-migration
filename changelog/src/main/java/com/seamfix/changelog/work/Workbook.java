@@ -32,7 +32,9 @@ public class Workbook {
 	Logger logger;
 
 	public  String changeLogs(String key) {
-		String target =propertiesManager.getProperty("changelogUrl", "https://seamfix.atlassian.net/rest/api/3/issue/" + key +"/changelog?");
+		
+		String changelog =propertiesManager.getProperty("changelogUrl", "https://seamfix.atlassian.net/rest/api/3/issue/");
+		String target = changelog + key +"/changelog?";
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();

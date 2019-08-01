@@ -93,16 +93,20 @@ public class FileManager {
 	 * @param defaultVal - property default value if key doesn't exist
 	 * @return property
 	 */
-	public String getProperty(String key, String defaultVal) {
+	public String getProperty(String property, 
+			String defaultVal){
 
-		HashMap<String, String> propertyMap = new HashMap<String, String>();
-		if (defaultVal != null && !defaultVal.isEmpty()) {
-			propertyMap.put(key, defaultVal);
-		}else {
-			return properties.getProperty(key);
-		}
-		
-		saveProperties(propertyMap);
+		HashMap<String, String> propertyMap = null;
+
+		String props = properties.getProperty(property, "");
+		if (props == null || props.isEmpty()){
+			propertyMap = new HashMap<String, String>();
+			propertyMap.put(property, defaultVal);
+		}else
+			return props;
+
+		if (propertyMap != null)
+			saveProperties(propertyMap);
 
 		return defaultVal;
 	}
