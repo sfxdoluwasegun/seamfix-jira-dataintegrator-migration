@@ -361,7 +361,7 @@ public class Workbook {
 				sheet.autoSizeColumn(p);
 			}
 			// Write the output to a file
-			String sourceDirPath=propertiesManager.getProperty("scrumExcelFile", "C:\\Users\\Seamfix\\Downloads");
+			String sourceDirPath=propertiesManager.getProperty("scrumExcelFile", "C:\\");
 			FileOutputStream fileOut = null;
 			try {
 				fileOut = new FileOutputStream(sourceDirPath + dataBean.getProjectID()+"-"+"Log.xlsx");

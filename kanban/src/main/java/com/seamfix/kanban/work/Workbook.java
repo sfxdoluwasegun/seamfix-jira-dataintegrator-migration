@@ -373,7 +373,7 @@ public class Workbook {
 				sheet.autoSizeColumn(p);
 			}
 			// Write the output to a file
-			String sourcePath= propertiesManager.getProperty("kanbanExcelFile","C:\\Users\\Seamfix\\Downloads");
+			String sourcePath= propertiesManager.getProperty("kanbanExcelFile","C:\\");
 			FileOutputStream fileOut = null;
 			try {
 				fileOut = new FileOutputStream(sourcePath + dataBean.getProjectName() + "-"+ dataBean.getEndDate()+"-"+"Log.xlsx");
