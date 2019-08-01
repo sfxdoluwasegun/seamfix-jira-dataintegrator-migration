@@ -108,7 +108,6 @@ public class Workbook {
 
 	private JsonObject postService(String key, String json) {
 		String changelog= propertiesManager.getProperty("changelogPath", "http://localhost:8088/changelog/");
-		logger.info("URI FRM PROPS:" + changelog);
 		String target = changelog + key;
 		String response = recieveResponse(target,key, json);
 		
@@ -367,7 +366,6 @@ public class Workbook {
 				
 				row.createCell(8)
 				.setCellValue(excelFile.getCount());
-System.out.println(excelFile.getCount());
 			}
 			// Resize all columns to fit the content size
 			for(int p = 0; p < columns.length; p++) {
