@@ -119,7 +119,7 @@ public class Workbook {
 	}
 
 	private JsonObject postLog(String key, String json) {
-		String getIssue= propertiesManager.getProperty("getIssuePath", "http://192.168.10.30:8100/get-issue/");
+		String getIssue= propertiesManager.getProperty("getIssuePath", "http://localhost:8087/get-issue/");
 		String target = getIssue + key;
 		String response = recieveResponse(target,key, json);
 		if(response == null) {
@@ -387,8 +387,6 @@ public class Workbook {
 			} catch (IOException e) {
 				logger.log(Level.WARNING,"IOException");
 			}
-
-
 		}
 	}
 

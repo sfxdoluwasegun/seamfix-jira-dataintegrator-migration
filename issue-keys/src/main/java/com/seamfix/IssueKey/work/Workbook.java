@@ -91,7 +91,7 @@ public class Workbook {
 	}
 
 	private JsonObject postService(String key, String json) {
-		String changelog= propertiesManager.getProperty("changelogPath", "http://192.168.11.23:8106/changelog/");
+		String changelog= propertiesManager.getProperty("changelogPath", "http://localhost:8088/changelog/");
 		String target = changelog + key;
 		String response = recieveResponse(target, key, json);
 		if(response == null) {
@@ -102,7 +102,7 @@ public class Workbook {
 	}
 
 	private JsonObject postLog(String key, String json) {
-		String getIssue=propertiesManager.getProperty("getIssuePath", "http://192.168.10.30:8100/get-issue/");
+		String getIssue=propertiesManager.getProperty("getIssuePath", "http://localhost:8087/get-issue/");
 		String target = getIssue + key;
 		String response = recieveResponse(target,key, json);
 		
