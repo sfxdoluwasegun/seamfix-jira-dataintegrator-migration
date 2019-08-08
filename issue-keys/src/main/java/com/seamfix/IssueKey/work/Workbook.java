@@ -50,7 +50,8 @@ public class Workbook {
 	Logger logger;
 
 	public  String sprintIssue() {
-		String target =propertiesManager.getProperty("sprintIssueUrl", "https://seamfix.atlassian.net/rest/agile/1.0/board/"+dataBean.getProjectID()+"/issue?maxResults=100");
+		String sprint =propertiesManager.getProperty("sprintIssueUrl", "https://seamfix.atlassian.net/rest/agile/1.0/board/");
+		String target = sprint +dataBean.getProjectID() + "/issue?maxResults=100";
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
@@ -361,7 +362,7 @@ public class Workbook {
 				sheet.autoSizeColumn(p);
 			}
 			// Write the output to a file
-			String sourceDirPath=propertiesManager.getProperty("scrumExcelFile", "C:\\jcodes\\RND\\jira-dataintegrator\\");
+			String sourceDirPath=propertiesManager.getProperty("scrumExcelFile", "C:\\jcodes\\RND\\jira-dataintegrator\\Downloads\\");
 			FileOutputStream fileOut = null;
 			try {
 				fileOut = new FileOutputStream(sourceDirPath + dataBean.getProjectID()+"-"+"Log.xlsx");

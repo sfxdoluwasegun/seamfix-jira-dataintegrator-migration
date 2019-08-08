@@ -119,7 +119,7 @@ public class Workbook {
 	}
 
 	private JsonObject postLog(String key, String json) {
-		String getIssue= propertiesManager.getProperty("getIssuePath", "http://localhost:8087/getIssue/");
+		String getIssue= propertiesManager.getProperty("getIssuePath", "http://localhost:8087/get-issue/");
 		String target = getIssue + key;
 		String response = recieveResponse(target,key, json);
 		if(response == null) {
@@ -345,35 +345,34 @@ public class Workbook {
 
 				row.createCell(1)
 				.setCellValue(excelFile.getAssignee());
-
+				
 				row.createCell(2)
 				.setCellValue(excelFile.getDateCreated());
-
+				
 				row.createCell(3)
 				.setCellValue(excelFile.getDateModified());
-
+				
 				row.createCell(4)
 				.setCellValue(excelFile.getCurrentStatus());
-
+				
 				row.createCell(5)
 				.setCellValue(excelFile.getStoryPoint());
-
+				
 				row.createCell(6)
 				.setCellValue(excelFile.getWorklog());
-
+				
 				row.createCell(7)
 				.setCellValue(excelFile.getFromString().toString().replaceAll(",", " -> "));
-
+				
 				row.createCell(8)
 				.setCellValue(excelFile.getCount());
-
 			}
 			// Resize all columns to fit the content size
 			for(int p = 0; p < columns.length; p++) {
 				sheet.autoSizeColumn(p);
 			}
 			// Write the output to a file
-			String sourcePath= propertiesManager.getProperty("kanbanExcelFile","C:\\jcodes\\RND\\jira-dataintegrator\\");
+			String sourcePath= propertiesManager.getProperty("kanbanExcelFile","C:\\jcodes\\RND\\jira-dataintegrator\\Downloads\\");
 			FileOutputStream fileOut = null;
 			try {
 				fileOut = new FileOutputStream(sourcePath + dataBean.getProjectName() + "-"+ dataBean.getEndDate()+"-"+"Log.xlsx");
@@ -388,8 +387,6 @@ public class Workbook {
 			} catch (IOException e) {
 				logger.log(Level.WARNING,"IOException");
 			}
-
-
 		}
 	}
 
