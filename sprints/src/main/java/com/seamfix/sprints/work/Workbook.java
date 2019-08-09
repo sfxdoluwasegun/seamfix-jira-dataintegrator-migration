@@ -36,7 +36,7 @@ public class Workbook {
 	 */
 	public  String sprints() {
 		String sprint =propertiesManager.getProperty("sprintsUrl", "https://seamfix.atlassian.net/rest/agile/1.0/board/");
-		String target = sprint +  + dataBean.getProjectID() +"/sprint/";
+		String target = sprint + dataBean.getProjectID() +"/sprint/";
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
@@ -56,7 +56,7 @@ public class Workbook {
 	 */
 	public String sprintDetail() {
 		String sprint =propertiesManager.getProperty("sprintDetailsnUrl", "https://seamfix.atlassian.net/rest/agile/1.0/sprint/");
-		String target = sprint +  + dataBean.getSprintID();
+		String target = sprint + dataBean.getSprintID();
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();

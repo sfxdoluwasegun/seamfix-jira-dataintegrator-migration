@@ -47,7 +47,8 @@ public class Workbook {
 	}
 
 	public  String projects() {
-		String target =propertiesManager.getProperty("projectsUrl","https://seamfix.atlassian.net/rest/agile/1.0/board?startAt="+dataBean.getProjectSize());
+		String projects = propertiesManager.getProperty("projectsUrl","https://seamfix.atlassian.net/rest/agile/1.0/board?startAt=");
+		String target = projects +dataBean.getProjectSize();
 		Client client = null;
 		try {
 			client = ClientBuilder.newClient();
