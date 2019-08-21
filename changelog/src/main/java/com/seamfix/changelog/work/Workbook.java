@@ -60,8 +60,17 @@ public class Workbook {
 		JsonObject root = Json.createReader(new StringReader(changeLogs(key))).readObject();
 		
 		if (root == null) {
-			prepareErrorMessage(Status.FORBIDDEN, "Changelog Error", "Couldn't get changelog");
+			prepareErrorMessage(Status.FORBIDDEN, "Changelog Error", "Empty json");
 			return null;
+		}
+		
+		JsonArray value = root.getJsonArray("values");
+		if(value.isEmpty() || value == null) {
+			prepareErrorMessage(Status.FORBIDDEN, "Changelog Error", "Empty json");
+			dataBean.setStoryPoint("Empty Story");
+			dataBean.setDateCreated("Empty Story");
+			dataBean.setDateModified("Empty Story");
+			dataBean.setCurrentStatus("Empty Story");
 		}
 		return root.getJsonArray("values");
 	}
@@ -71,7 +80,7 @@ public class Workbook {
 		JsonArray values = getStringResponse();
 		
 		if (values == null) {
-			prepareErrorMessage(Status.FORBIDDEN, "Changelog Error", "Couldn't get changelog");
+			prepareErrorMessage(Status.NO_CONTENT, "Changelog Error", "Task ID is empty");
 			return;
 		}
 
@@ -128,7 +137,7 @@ public class Workbook {
 	public void getStories(){
 		JsonArray values = getStringResponse();
 		if (values == null || values.isEmpty()) {
-			prepareErrorMessage(Status.FORBIDDEN, "Changelog Error", "Couldn't get stories");
+			prepareErrorMessage(Status.NO_CONTENT, "Changelog Error", "Task ID is empty");
 			return;
 		}
 		List<JsonObject> stories = values
@@ -137,7 +146,7 @@ public class Workbook {
 				.map(story -> story.asJsonObject())
 				.collect(Collectors.toList());
 		
-		int k =0;
+		int k = 0;
 		if(k == stories.size()) {
 			dataBean.setStoryPoint("0");
 		}else {

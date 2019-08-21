@@ -28,8 +28,10 @@ public class QueryData {
 
 	public String toJsonErr() {
 		JsonObject json = Json.createObjectBuilder()
+				.add("Task ID", getTaskID())
 				.add("error", getError())
 				.add("message", getMessage())
+				.add("Worklog", getWorklog())
 				.build();
 
 		try (JsonWriter writer = Json.createWriter(getSWriter())) {

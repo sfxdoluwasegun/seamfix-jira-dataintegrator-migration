@@ -1,5 +1,6 @@
 package com.seamfix.IssueKey.work;
 
+import java.io.Console;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -362,10 +363,12 @@ public class Workbook {
 				sheet.autoSizeColumn(p);
 			}
 			// Write the output to a file
-			String sourceDirPath=propertiesManager.getProperty("scrumExcelFile", "C:\\jcodes\\RND\\jira-dataintegrator\\Downloads\\");
+			String sourceDirPath=propertiesManager.getProperty("scrumExcelFile", " System.getProperty(\"user.home\") + File.separator + \"Downloads\" + File.separator");
 			FileOutputStream fileOut = null;
+			
 			try {
 				fileOut = new FileOutputStream(sourceDirPath + dataBean.getProjectID()+"-"+"Log.xlsx");
+				System.out.println( System.getProperty("user.home"));
 			} catch (FileNotFoundException e) {
 				logger.log(Level.WARNING, "File Not Found");
 			}

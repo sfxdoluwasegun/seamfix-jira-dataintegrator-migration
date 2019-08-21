@@ -100,6 +100,7 @@ public class Workbook {
 					.request()
 					.header("Authorization", dataBean.getAuth())
 					.post(Entity.entity(jsonRequest, MediaType.APPLICATION_JSON), String.class);
+			
 		} finally {
 			if (client != null)
 				client.close();
@@ -109,8 +110,8 @@ public class Workbook {
 	private JsonObject postService(String key, String json) {
 		String changelog= propertiesManager.getProperty("changelogPath", "http://localhost:8088/changelog/");
 		String target = changelog + key;
+		System.out.println(key);
 		String response = recieveResponse(target,key, json);
-		
 		if(response == null) {
 			prepareErrorMessage(Status.EXPECTATION_FAILED, "Changelog Error", "Error getting the changelog. Please retry");
 			return null;
@@ -121,6 +122,7 @@ public class Workbook {
 	private JsonObject postLog(String key, String json) {
 		String getIssue= propertiesManager.getProperty("getIssuePath", "http://localhost:8087/get-issue/");
 		String target = getIssue + key;
+		System.out.println(key);
 		String response = recieveResponse(target,key, json);
 		if(response == null) {
 			prepareErrorMessage(Status.EXPECTATION_FAILED, "Worklog Error", "Error getting the worklog. Please retry");
@@ -258,9 +260,11 @@ public class Workbook {
 			List<String> listOfFromString = new ArrayList<>();
 
 			String key = issue.getString("key");
+			System.out.println(key);
 			file.setKey(key);
 
 			String assignee = issue.getJsonObject("fields").getJsonObject("assignee").getString("displayName");
+			System.out.println(assignee);
 			file.setAssignee(assignee);
 
 			String jsonString = createJson(key);
@@ -275,6 +279,7 @@ public class Workbook {
 			}
 
 			String worklog = logObject.getString("Worklog");
+			System.out.println(worklog);
 			file.setWorklog(worklog);
 
 			if(jsonObject == null || jsonObject.isEmpty()) {
@@ -284,15 +289,19 @@ public class Workbook {
 			JsonObject json = jsonObject.getJsonObject("issues");
 
 			String startDate = json.getString("startDate");
+			System.out.println(startDate);
 			file.setDateCreated(startDate);
 
 			String endDate = json.getString("endDate");
+			System.out.println(endDate);
 			file.setDateModified(endDate);
 
 			String currentStatus = json.getString("currentStatus");
+			System.out.println(currentStatus);
 			file.setCurrentStatus(currentStatus);
 
 			String storyPoint = json.getString("storyPoint");
+			System.out.println(storyPoint);
 			file.setStoryPoint(storyPoint);
 
 
@@ -309,6 +318,7 @@ public class Workbook {
 			} else {
 				int number = Collections.frequency(listOfFromString, "In QA Review");
 				String count = String.valueOf(number);
+				System.out.println(count);
 				file.setCount(count);
 			}
 
