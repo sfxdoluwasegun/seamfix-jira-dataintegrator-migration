@@ -260,11 +260,9 @@ public class Workbook {
 			List<String> listOfFromString = new ArrayList<>();
 
 			String key = issue.getString("key");
-			System.out.println(key);
 			file.setKey(key);
 
 			String assignee = issue.getJsonObject("fields").getJsonObject("assignee").getString("displayName");
-			System.out.println(assignee);
 			file.setAssignee(assignee);
 
 			String jsonString = createJson(key);
@@ -279,7 +277,6 @@ public class Workbook {
 			}
 
 			String worklog = logObject.getString("Worklog");
-			System.out.println(worklog);
 			file.setWorklog(worklog);
 
 			if(jsonObject == null || jsonObject.isEmpty()) {
@@ -289,19 +286,15 @@ public class Workbook {
 			JsonObject json = jsonObject.getJsonObject("issues");
 
 			String startDate = json.getString("startDate");
-			System.out.println(startDate);
 			file.setDateCreated(startDate);
 
 			String endDate = json.getString("endDate");
-			System.out.println(endDate);
 			file.setDateModified(endDate);
 
 			String currentStatus = json.getString("currentStatus");
-			System.out.println(currentStatus);
 			file.setCurrentStatus(currentStatus);
 
 			String storyPoint = json.getString("storyPoint");
-			System.out.println(storyPoint);
 			file.setStoryPoint(storyPoint);
 
 
