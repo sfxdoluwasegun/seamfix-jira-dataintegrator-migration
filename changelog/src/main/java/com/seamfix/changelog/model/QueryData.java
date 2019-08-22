@@ -39,8 +39,13 @@ public class QueryData {
 
 	public String toJsonErr() {
 		JsonObject json = Json.createObjectBuilder()
+				.add("taskID", getTaskID())
 				.add("error", getError())
 				.add("message", getMessage())
+				.add("startDate", getDateCreated())
+				.add("endDate", getDateModified())
+				.add("currentStatus", getCurrentStatus())
+				.add("storyPoint", getStoryPoint())
 				.build();
 
 		try (JsonWriter writer = Json.createWriter(getSWriter())) {

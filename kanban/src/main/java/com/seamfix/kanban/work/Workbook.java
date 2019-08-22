@@ -100,6 +100,7 @@ public class Workbook {
 					.request()
 					.header("Authorization", dataBean.getAuth())
 					.post(Entity.entity(jsonRequest, MediaType.APPLICATION_JSON), String.class);
+			
 		} finally {
 			if (client != null)
 				client.close();
@@ -109,8 +110,8 @@ public class Workbook {
 	private JsonObject postService(String key, String json) {
 		String changelog= propertiesManager.getProperty("changelogPath", "http://localhost:8088/changelog/");
 		String target = changelog + key;
+		System.out.println(key);
 		String response = recieveResponse(target,key, json);
-		
 		if(response == null) {
 			prepareErrorMessage(Status.EXPECTATION_FAILED, "Changelog Error", "Error getting the changelog. Please retry");
 			return null;

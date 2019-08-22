@@ -51,13 +51,14 @@ public class Workbook {
 		
 		if (getIssue(key) == null) {
 			prepareErrorMessage(Status.NOT_FOUND, "Connection Error", "Couldn't connect the the JIRA API");
+			dataBean.setWorklog("Empty Task");
 			return;
 		}
 		
 		JsonObject root = Json.createReader(new StringReader(getIssue(key))).readObject();
 
 		if (root == null) {
-			prepareErrorMessage(Status.FORBIDDEN, "Worklog Error", "Can't get worklog");
+			prepareErrorMessage(Status.NO_CONTENT, "Worklog Error", "Empty Json");
 			return;
 		}
 		
@@ -66,7 +67,7 @@ public class Workbook {
 
 		JsonObject values = root.getJsonObject("fields");
 		if (values == null || values.isEmpty()) {
-			prepareErrorMessage(Status.FORBIDDEN, "Worklog Error", "Can't get worklog");
+			prepareErrorMessage(Status.NO_CONTENT, "Worklog Error", "Task Id has no story");
 			return;
 		}
 
