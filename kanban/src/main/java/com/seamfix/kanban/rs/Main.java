@@ -44,7 +44,6 @@ public class Main {
 		 
 		 if (dataBean.getStatus().getFamily() != Status.Family.SUCCESSFUL) 
 				return Response.status(dataBean.getStatus()).entity(dataBean.toJsonErr()).type("application/json").build();
-		 
-		 return Response.ok("Downloaded").build();
+		 return null;
 	}
 }
