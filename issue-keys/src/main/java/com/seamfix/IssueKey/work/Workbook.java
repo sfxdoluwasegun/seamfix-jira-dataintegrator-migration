@@ -1,6 +1,5 @@
 package com.seamfix.IssueKey.work;
 
-import java.io.Console;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -122,6 +121,9 @@ public class Workbook {
 		
 		JsonObject root = Json.createReader(new StringReader(sprintIssue())).readObject();
 		JsonArray issues = root.getJsonArray("issues");
+		
+		int total = root.getInt("total");
+		dataBean.setTotal(total);
 
 		List<JsonObject> filteredValues = issues
 				.stream()
@@ -381,6 +383,7 @@ public class Workbook {
 				logger.log(Level.WARNING, "IOException error");
 			}
 		}
+		dataBean.getSuccessMessage();
 	}
 	
 	private void prepareErrorMessage(Status status, String error, String message) {

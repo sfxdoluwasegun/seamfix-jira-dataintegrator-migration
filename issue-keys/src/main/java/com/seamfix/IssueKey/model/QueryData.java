@@ -31,14 +31,28 @@ public class QueryData {
 	private String auth;
 	private String error;
 	private String message;
+	private String successMessage;
 	
 	private long members;
+	private long total;
 	private double totalPoints;
 	private double completePoints;
 
 	private StringWriter sWriter = new StringWriter();
 	
 	private Status status = Status.OK;
+	
+	public String success() {
+		JsonObject json = Json.createObjectBuilder()
+				.add("success", getSuccessMessage())
+				.build();
+
+		try (JsonWriter writer = Json.createWriter(getSWriter())) {
+			writer.write(json);
+		}
+		return getSWriter().toString();
+	}
+	
 
 	public String toJsonErr() {
 		JsonObject json = Json.createObjectBuilder()
@@ -54,6 +68,7 @@ public class QueryData {
 	
 	public String getJSON() {
 		JsonObjectBuilder json = Json.createObjectBuilder()
+				.add("total", getTotal())
 				.add("totalMember", getMembers())
 				.add("completePoints", getCompletePoints())
 				.add("totalPoints", getTotalPoints());
